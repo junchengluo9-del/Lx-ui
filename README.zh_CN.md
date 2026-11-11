@@ -11,7 +11,7 @@
 > 本项目仅供个人使用，请勿用于非法用途。
 
 > [!NOTE]
-> **发布仓库。** 本仓库中所有仓库 URL（安装/更新脚本、面板自更新、文档、前端）都指向 `jluo73423-ux/Lx-ui`，
+> **发布仓库。** 本仓库中所有仓库 URL（安装/更新脚本、面板自更新、文档、前端）都指向 `junchengluo9-del/Lx-ui`，
 > 它只在一个地方定义：[`tools/rebrand.env`](tools/rebrand.env) 中的 `LXUI_REPO`。如需迁移到其他账号：
 >
 > ```bash
@@ -35,7 +35,7 @@
 ## 安装
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/jluo73423-ux/Lx-ui/main/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/junchengluo9-del/Lx-ui/main/install.sh)
 ```
 
 安装指定版本：在末尾追加标签，例如 `v1.0.0`；`dev` 表示安装 `main` 的滚动构建（预发布标签 `dev-latest`）。
@@ -43,7 +43,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/jluo73423-ux/Lx-ui/main/instal
 发布包会用 `.sha256` 校验。无人值守安装（cloud-init）与 3x-ui 相同，设置 `XUI_NONINTERACTIVE=1`，
 见 [deploy/](deploy/)。
 
-Docker 镜像：`ghcr.io/jluo73423-ux/lx-ui`（数据卷 `/etc/lx-ui`）。
+Docker 镜像：`ghcr.io/junchengluo9-del/lx-ui`（数据卷 `/etc/lx-ui`）。
 
 | | 3x-ui | Lx-ui |
 | --- | --- | --- |
@@ -77,7 +77,7 @@ Lx-ui 随包 **Xray v26.6.27**——仍兼容所有 REALITY 客户端（Shadowro
 **推荐方式（systemd 主机）：**
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/jluo73423-ux/Lx-ui/main/install.sh) --migrate-from-3x-ui
+bash <(curl -Ls https://raw.githubusercontent.com/junchengluo9-del/Lx-ui/main/install.sh) --migrate-from-3x-ui
 ```
 
 脚本会停止并禁用 `x-ui.service`，把 `/etc/x-ui` 备份为 `/etc/x-ui.bak-<时间戳>`，

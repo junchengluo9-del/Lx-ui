@@ -11,8 +11,8 @@ export interface InstallOptions {
   webBasePath: string;
 }
 
-const REPO_RAW = 'https://raw.githubusercontent.com/jluo73423-ux/Lx-ui/main/install.sh';
-const IMAGE = 'ghcr.io/jluo73423-ux/lx-ui:latest';
+const REPO_RAW = 'https://raw.githubusercontent.com/junchengluo9-del/Lx-ui/main/install.sh';
+const IMAGE = 'ghcr.io/junchengluo9-del/lx-ui:latest';
 
 function isLatest(version: string): boolean {
   const v = version.trim().toLowerCase();

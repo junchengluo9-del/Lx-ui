@@ -6,7 +6,9 @@ import (
 )
 
 func TestNextWeeklyRenewal_RepeatedMidnight(t *testing.T) {
-	loc, err := time.LoadLocation("America/Havana")
+	// America/New_York keeps a November fallback; America/Havana no longer
+	// falls back in 2026 (tzdata 2026f), so the old fixture was stale.
+	loc, err := time.LoadLocation("America/New_York")
 	if err != nil {
 		t.Fatal(err)
 	}

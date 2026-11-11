@@ -237,3 +237,12 @@ First stable release after 1.0.0. Summary of the fixes since 1.0.0:
   downgrade and is left as is.
 - CI: docs Pages deploy is skipped unless the repo variable `PAGES_ENABLED=true`.
 - No functional change; bundled Xray stays v26.6.27.
+
+## 2026-11-11 — v1.0.5
+
+- The project repository moved to `junchengluo9-del/Lx-ui`. Install, update,
+  self-update and documentation URLs now point at the new repo. Behaviour and
+  the bundled Xray core (v26.6.27) are unchanged.
+- Test: `TestNextWeeklyRenewal_RepeatedMidnight` now uses `America/New_York`,
+  because tzdata 2026f no longer has a November 2026 fallback in
+  `America/Havana`.

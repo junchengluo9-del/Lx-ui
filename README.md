@@ -13,7 +13,7 @@ see [NOTICE](NOTICE) and [docs/LX_CHANGES.md](docs/LX_CHANGES.md).
 
 > [!NOTE]
 > **Release repository.** Every repository URL in this tree (install/update
-> scripts, panel self-update, docs, frontend) points at `jluo73423-ux/Lx-ui`.
+> scripts, panel self-update, docs, frontend) points at `junchengluo9-del/Lx-ui`.
 > It is defined in exactly one place, [`tools/rebrand.env`](tools/rebrand.env)
 > (`LXUI_REPO`). To move the project to another owner:
 >
@@ -43,7 +43,7 @@ see [NOTICE](NOTICE) and [docs/LX_CHANGES.md](docs/LX_CHANGES.md).
 ## Install
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/jluo73423-ux/Lx-ui/main/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/junchengluo9-del/Lx-ui/main/install.sh)
 ```
 
 A specific version: append its tag, e.g. `v1.0.0`; `dev` installs the rolling
@@ -54,7 +54,7 @@ automatically and say so. After installation run
 `.sha256` sums. Non-interactive installs (cloud-init) work as in 3x-ui with
 `XUI_NONINTERACTIVE=1`; see [deploy/](deploy/).
 
-Docker image: `ghcr.io/jluo73423-ux/lx-ui` (data volume `/etc/lx-ui`).
+Docker image: `ghcr.io/junchengluo9-del/lx-ui` (data volume `/etc/lx-ui`).
 
 | | 3x-ui | Lx-ui |
 | --- | --- | --- |
@@ -103,7 +103,7 @@ your clients support ML-KEM.
 **Recommended (systemd hosts):**
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/jluo73423-ux/Lx-ui/main/install.sh) --migrate-from-3x-ui
+bash <(curl -Ls https://raw.githubusercontent.com/junchengluo9-del/Lx-ui/main/install.sh) --migrate-from-3x-ui
 ```
 
 The script stops and disables `x-ui.service`, backs up `/etc/x-ui` to
