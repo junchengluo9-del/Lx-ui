@@ -246,3 +246,11 @@ First stable release after 1.0.0. Summary of the fixes since 1.0.0:
 - Test: `TestNextWeeklyRenewal_RepeatedMidnight` now uses `America/New_York`,
   because tzdata 2026f no longer has a November 2026 fallback in
   `America/Havana`.
+
+## 2026-11-11 — v1.0.6
+
+- Security: Go toolchain bumped to 1.27.4, fixing GO-2026-6859 in `net/http`
+  (HTTP/1 server crash from a MaxBytesReader header race).
+- Security: `github.com/klauspost/compress` v1.20.2 (GO-2026-6865) and
+  `github.com/andybalholm/brotli` v1.2.7 (GO-2026-6888).
+- No functional change; bundled Xray stays v26.6.27.
