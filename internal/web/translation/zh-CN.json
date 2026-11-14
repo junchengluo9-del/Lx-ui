@@ -107,8 +107,7 @@
     "support": "支持",
     "qrTitle": "扫码。导入。连接。",
     "qrHint": "使用客户端应用扫描。请勿泄露此二维码。",
-    "saveQr": "保存二维码",
-    "individualLinks": "单独链接"
+    "saveQr": "保存二维码"
   },
   "menu": {
     "theme": "主题",
@@ -122,8 +121,6 @@
     "routing": "路由",
     "outbounds": "出站",
     "apiDocs": "API 文档",
-    "donate": "捐赠",
-    "sponsors": "赞助商",
     "hosts": "主机",
     "docs": "文档",
     "openMenu": "打开菜单",
@@ -2477,8 +2474,7 @@
         "tags": "标签",
         "nodeGuids": "节点",
         "excludeFromSubTypes": "从格式中排除",
-        "inheritAddress": "继承地址",
-        "echConfigList": "ECH 配置列表"
+        "inheritAddress": "继承地址"
       },
       "hints": {
         "address": "留空则继承入站自身的地址。",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "请输入 0 到 65535 之间的单个数字"
       },
       "dragToReorder": "拖动以重新排列 {name}"
-    },
-    "sponsors": {
-      "title": "赞助商",
-      "intro": "支持 Lx-ui 开发的公司。赞助链接将在新标签页中打开。",
-      "become": "成为赞助商",
-      "tag": "赞助",
-      "visit": "访问",
-      "yourBrand": "您的品牌展示位",
-      "yourBrandText": "让每天打开 Lx-ui 的数千名服务器管理员看到您的公司。"
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ 操作错误。\r\n\r\n<code>错误: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core 未运行。",
       "startDesc": "显示主菜单",
-      "statusOk": "✅ 机器人运行正常！",
-      "start": "👋 你好，<i>{{ .Firstname }}</i>。\r\n",
-      "welcome": "🤖 欢迎来到 <b>{{ .Hostname }}</b> 管理机器人。\r\n",
-      "status": "✅ 机器人正常运行！",
-      "usage": "❗ 请输入要搜索的文本！",
-      "helpDesc": "机器人帮助",
-      "statusDesc": "检查机器人状态",
-      "idDesc": "显示您的 Telegram ID",
-      "usageDesc": "查看客户端用量：/usage 邮箱",
-      "inboundDesc": "搜索入站：/inbound 备注（管理员）",
-      "restartDesc": "重启 Xray 内核（管理员）",
-      "broadcastDesc": "向所有客户端群发消息（管理员）",
-      "clearallDesc": "重置所有客户端流量（管理员）"
+      "statusOk": "✅ 机器人运行正常！"
     },
     "messages": {
       "cpuThreshold": "CPU 使用率为 {{ .Percent }}%，超过阈值 {{ .Threshold }}%",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. JSON 订阅",
       "qrLegendLink": "{{ .Code }}. 应用链接 {{ .App }}",
       "backupFailed": "无法读取数据库，未发送备份。",
-      "privateOnly": "🤖 此机器人仅在私聊中工作。请在私信中打开它。",
-      "inviteLink": "🔗 <code>{{ .Email }}</code> 的邀请链接：\r\n<code>{{ .Link }}</code>\r\n\r\n第一个打开它的人将绑定到此客户端。\r\n",
-      "received_email": "📧📥 邮箱已更新。",
-      "received_comment": "💬📥 评论已更新。",
-      "using_default_value": "好的，我会使用默认值。 😊"
+      "privateOnly": "🤖 此机器人仅在私聊中工作。请在私信中打开它。"
     },
     "buttons": {
       "closeKeyboard": "❌ 关闭键盘",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 广播",
       "attachInbound": "关联入站 ({{ .Count }})",
-      "attachDone": "✅ 完成",
-      "clientUsage": "获取使用情况",
-      "commands": "命令"
+      "attachDone": "✅ 完成"
     },
     "answers": {
       "broadcastStarted": "🚀 群发已开始。",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ 自定义键盘已关闭！"
+    }
   },
   "discord": {
     "test": {

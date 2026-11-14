@@ -107,8 +107,7 @@
     "support": "پشتیبانی",
     "qrTitle": "اسکن. افزودن. اتصال.",
     "qrHint": "با اپلیکیشن کلاینت اسکن کنید. این کد را به کسی ندهید.",
-    "saveQr": "ذخیره QR",
-    "individualLinks": "لینک‌های تکی"
+    "saveQr": "ذخیره QR"
   },
   "menu": {
     "theme": "تم",
@@ -122,8 +121,6 @@
     "routing": "مسیریابی",
     "outbounds": "خروجی‌ها",
     "apiDocs": "مستندات API",
-    "donate": "حمایت مالی",
-    "sponsors": "اسپانسرها",
     "hosts": "میزبان‌ها",
     "docs": "مستندات",
     "openMenu": "باز کردن منو",
@@ -2477,8 +2474,7 @@
         "tags": "برچسب‌ها",
         "nodeGuids": "نودها",
         "excludeFromSubTypes": "حذف از فرمت‌ها",
-        "inheritAddress": "ارث‌بری آدرس",
-        "echConfigList": "فهرست پیکربندی ECH"
+        "inheritAddress": "ارث‌بری آدرس"
       },
       "hints": {
         "address": "برای ارث‌بری آدرس خودِ اینباند خالی بگذارید.",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "یک عدد بین 0 تا 65535 وارد کنید"
       },
       "dragToReorder": "برای تغییر ترتیب {name} بکشید"
-    },
-    "sponsors": {
-      "title": "اسپانسرها",
-      "intro": "شرکت‌هایی که از توسعه‌ی Lx-ui حمایت می‌کنند. لینک‌های اسپانسر در تب جدید باز می‌شوند.",
-      "become": "اسپانسر شوید",
-      "tag": "اسپانسر",
-      "visit": "مشاهده",
-      "yourBrand": "جای برند شما",
-      "yourBrandText": "شرکت خود را جلوی چشم هزاران ادمین سروری بگذارید که هر روز Lx-ui را باز می‌کنند."
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ خطا در عملیات.\r\n\r\n<code>خطا: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core در حال اجرا نیست.",
       "startDesc": "نمایش منوی اصلی",
-      "statusOk": "✅ ربات سالم است!",
-      "start": "👋 سلام <i>{{ .Firstname }}</i>.\r\n",
-      "welcome": "🤖 به ربات مدیریت <b>{{ .Hostname }}</b> خوش آمدید.\r\n",
-      "status": "✅ ربات در حالت عادی است!",
-      "usage": "❗ لطفاً یک متن برای جستجو وارد کنید!",
-      "helpDesc": "راهنمای ربات",
-      "statusDesc": "بررسی وضعیت ربات",
-      "idDesc": "نمایش شناسه تلگرام شما",
-      "usageDesc": "مشاهده مصرف کاربر: /usage ایمیل",
-      "inboundDesc": "جستجوی ورودی‌ها: /inbound نام (مدیر)",
-      "restartDesc": "راه‌اندازی مجدد هسته Xray (مدیر)",
-      "broadcastDesc": "ارسال پیام به همه کاربران (مدیر)",
-      "clearallDesc": "صفر کردن ترافیک همه کاربران (مدیر)"
+      "statusOk": "✅ ربات سالم است!"
     },
     "messages": {
       "cpuThreshold": "بار ‌پردازنده {{ .Percent }}% بیشتر از آستانه است {{ .Threshold }}%",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. اشتراک JSON",
       "qrLegendLink": "{{ .Code }}. لینک برنامه {{ .App }}",
       "backupFailed": "خواندن پایگاه داده ممکن نشد؛ هیچ نسخه پشتیبانی ارسال نشد.",
-      "privateOnly": "🤖 این ربات فقط در چت خصوصی کار میکند. لطفاً آن را در پیام مستقیم باز کنید.",
-      "inviteLink": "🔗 لینک دعوت برای <code>{{ .Email }}</code>:\r\n<code>{{ .Link }}</code>\r\n\r\nاولین کسی که آن را باز کند به این کاربر متصل می‌شود.\r\n",
-      "received_email": "📧📥 ایمیل به‌روزرسانی شد.",
-      "received_comment": "💬📥 نظر به‌روزرسانی شد.",
-      "using_default_value": "باشه، از مقدار پیش‌فرض استفاده می‌کنم. 😊"
+      "privateOnly": "🤖 این ربات فقط در چت خصوصی کار میکند. لطفاً آن را در پیام مستقیم باز کنید."
     },
     "buttons": {
       "closeKeyboard": "❌ بستن کیبورد",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 همگانی",
       "attachInbound": "افزودن ورودی ({{ .Count }})",
-      "attachDone": "✅ انجام شد",
-      "clientUsage": "دریافت آمار کاربر",
-      "commands": "دستورات"
+      "attachDone": "✅ انجام شد"
     },
     "answers": {
       "broadcastStarted": "🚀 ارسال گروهی آغاز شد.",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ صفحه کلید بسته شد!"
+    }
   },
   "discord": {
     "test": {

@@ -107,8 +107,7 @@
     "support": "サポート",
     "qrTitle": "スキャン。インポート。接続。",
     "qrHint": "クライアントアプリでスキャンしてください。このコードは他人に見せないでください。",
-    "saveQr": "QR を保存",
-    "individualLinks": "個別リンク"
+    "saveQr": "QR を保存"
   },
   "menu": {
     "theme": "テーマ",
@@ -122,8 +121,6 @@
     "routing": "ルーティング",
     "outbounds": "アウトバウンド",
     "apiDocs": "API ドキュメント",
-    "donate": "寄付",
-    "sponsors": "スポンサー",
     "hosts": "ホスト",
     "docs": "ドキュメント",
     "openMenu": "メニューを開く",
@@ -2477,8 +2474,7 @@
         "tags": "タグ",
         "nodeGuids": "ノード",
         "excludeFromSubTypes": "形式から除外",
-        "inheritAddress": "アドレス継承",
-        "echConfigList": "ECH config リスト"
+        "inheritAddress": "アドレス継承"
       },
       "hints": {
         "address": "空欄にするとインバウンド自身のアドレスを継承します。",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "0〜65535 の単一の数値を入力してください"
       },
       "dragToReorder": "ドラッグして {name} を並べ替え"
-    },
-    "sponsors": {
-      "title": "スポンサー",
-      "intro": "Lx-ui の開発を支援している企業です。スポンサーリンクは新しいタブで開きます。",
-      "become": "スポンサーになる",
-      "tag": "スポンサー",
-      "visit": "訪問",
-      "yourBrand": "ここにあなたのブランドを",
-      "yourBrandText": "毎日 Lx-ui を開く何千人ものサーバー管理者に御社をアピールできます。"
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ 操作エラー。\r\n\r\n<code>エラー: {{ .Error }}</code>",
       "xrayNotRunning": "❗ Xray Core は動作していません。",
       "startDesc": "メインメニューを表示",
-      "statusOk": "✅ ボットは正常です！",
-      "start": "👋 こんにちは、<i>{{ .Firstname }}</i>。\r\n",
-      "welcome": "🤖 <b>{{ .Hostname }}</b> 管理ボットへようこそ。\r\n",
-      "status": "✅ ボットは正常に動作しています！",
-      "usage": "❗ 検索するテキストを入力してください！",
-      "helpDesc": "ボットのヘルプ",
-      "statusDesc": "ボットの状態を確認",
-      "idDesc": "Telegram IDを表示",
-      "usageDesc": "クライアント使用量を表示: /usage メール",
-      "inboundDesc": "インバウンド検索: /inbound 備考（管理者）",
-      "restartDesc": "Xray コアを再起動（管理者）",
-      "broadcastDesc": "全クライアントへ一括送信（管理者）",
-      "clearallDesc": "全クライアントのトラフィックをリセット（管理者）"
+      "statusOk": "✅ ボットは正常です！"
     },
     "messages": {
       "cpuThreshold": "CPU使用率は{{ .Percent }}%、しきい値{{ .Threshold }}%を超えました",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. JSON サブスクリプション",
       "qrLegendLink": "{{ .Code }}. アプリのリンク {{ .App }}",
       "backupFailed": "データベースを読み取れませんでした。バックアップは送信されていません。",
-      "privateOnly": "🤖 このボットは個人チャットでのみ動作します。ダイレクトメッセージで開いてください。",
-      "inviteLink": "🔗 <code>{{ .Email }}</code> の招待リンク:\r\n<code>{{ .Link }}</code>\r\n\r\n最初に開いた人がこのクライアントにリンクされます。\r\n",
-      "received_email": "📧📥 メールが更新されました。",
-      "received_comment": "💬📥 コメントが更新されました。",
-      "using_default_value": "わかりました、デフォルト値を使用します。 😊"
+      "privateOnly": "🤖 このボットは個人チャットでのみ動作します。ダイレクトメッセージで開いてください。"
     },
     "buttons": {
       "closeKeyboard": "❌ キーボードを閉じる",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 一斉送信",
       "attachInbound": "インバウンドを追加 ({{ .Count }})",
-      "attachDone": "✅ 完了",
-      "clientUsage": "使用状況を取得",
-      "commands": "コマンド"
+      "attachDone": "✅ 完了"
     },
     "answers": {
       "broadcastStarted": "🚀 一括送信を開始しました。",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ キーボードを閉じました！"
+    }
   },
   "discord": {
     "test": {

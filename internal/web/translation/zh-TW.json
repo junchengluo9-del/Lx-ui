@@ -107,8 +107,7 @@
     "support": "支援",
     "qrTitle": "掃描。匯入。連線。",
     "qrHint": "使用用戶端應用程式掃描。請勿外洩此 QR 碼。",
-    "saveQr": "儲存 QR 碼",
-    "individualLinks": "個別連結"
+    "saveQr": "儲存 QR 碼"
   },
   "menu": {
     "theme": "主題",
@@ -122,8 +121,6 @@
     "routing": "路由",
     "outbounds": "出站",
     "apiDocs": "API 文件",
-    "donate": "捐贈",
-    "sponsors": "贊助商",
     "hosts": "主機",
     "docs": "文件",
     "openMenu": "開啟選單",
@@ -2477,8 +2474,7 @@
         "tags": "標籤",
         "nodeGuids": "節點",
         "excludeFromSubTypes": "從格式中排除",
-        "inheritAddress": "繼承地址",
-        "echConfigList": "ECH 設定清單"
+        "inheritAddress": "繼承地址"
       },
       "hints": {
         "address": "留空以繼承入站本身的地址。",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "請輸入 0 到 65535 之間的單一數字"
       },
       "dragToReorder": "拖曳以重新排列 {name}"
-    },
-    "sponsors": {
-      "title": "贊助商",
-      "intro": "支持 Lx-ui 開發的公司。贊助連結將在新分頁中開啟。",
-      "become": "成為贊助商",
-      "tag": "贊助",
-      "visit": "造訪",
-      "yourBrand": "您的品牌展示位",
-      "yourBrandText": "讓每天打開 Lx-ui 的數千名伺服器管理員看到您的公司。"
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ 操作錯誤。\r\n\r\n<code>錯誤: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core 未運行。",
       "startDesc": "顯示主選單",
-      "statusOk": "✅ 機器人運作正常！",
-      "start": "👋 你好，<i>{{ .Firstname }}</i>。\r\n",
-      "welcome": "🤖 歡迎來到 <b>{{ .Hostname }}</b> 管理機器人。\r\n",
-      "status": "✅ 機器人正常執行！",
-      "usage": "❗ 請輸入要搜尋的文字！",
-      "helpDesc": "機器人幫助",
-      "statusDesc": "檢查機器人狀態",
-      "idDesc": "顯示您的 Telegram ID",
-      "usageDesc": "查看客戶端用量：/usage 郵箱",
-      "inboundDesc": "搜尋入站：/inbound 備註（管理員）",
-      "restartDesc": "重啟 Xray 核心（管理員）",
-      "broadcastDesc": "向所有客戶端群發訊息（管理員）",
-      "clearallDesc": "重置所有客戶端流量（管理員）"
+      "statusOk": "✅ 機器人運作正常！"
     },
     "messages": {
       "cpuThreshold": "CPU 使用率為 {{ .Percent }}%，超過閾值 {{ .Threshold }}%",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. JSON 訂閱",
       "qrLegendLink": "{{ .Code }}. 應用程式連結 {{ .App }}",
       "backupFailed": "無法讀取資料庫，未傳送備份。",
-      "privateOnly": "🤖 此機器人僅在私聊中運作。請在私訊中開啟它。",
-      "inviteLink": "🔗 <code>{{ .Email }}</code> 的邀請連結：\r\n<code>{{ .Link }}</code>\r\n\r\n第一個開啟它的人將綁定至此客戶端。\r\n",
-      "received_email": "📧📥 電子郵件已更新。",
-      "received_comment": "💬📥 評論已更新。",
-      "using_default_value": "好的，我會使用預設值。 😊"
+      "privateOnly": "🤖 此機器人僅在私聊中運作。請在私訊中開啟它。"
     },
     "buttons": {
       "closeKeyboard": "❌ 關閉鍵盤",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 廣播",
       "attachInbound": "關聯入站 ({{ .Count }})",
-      "attachDone": "✅ 完成",
-      "clientUsage": "獲取使用情況",
-      "commands": "命令"
+      "attachDone": "✅ 完成"
     },
     "answers": {
       "broadcastStarted": "🚀 群發已開始。",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ 自定義鍵盤已關閉！"
+    }
   },
   "discord": {
     "test": {

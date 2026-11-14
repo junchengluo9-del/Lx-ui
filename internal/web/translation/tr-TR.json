@@ -107,8 +107,7 @@
     "support": "Destek",
     "qrTitle": "Tara. İçe aktar. Bağlan.",
     "qrHint": "İstemci uygulamanızla tarayın. Bu kodu kimseyle paylaşmayın.",
-    "saveQr": "QR'ı kaydet",
-    "individualLinks": "Bireysel Bağlantılar"
+    "saveQr": "QR'ı kaydet"
   },
   "menu": {
     "theme": "Tema",
@@ -122,8 +121,6 @@
     "routing": "Yönlendirme",
     "outbounds": "Giden Bağlantılar",
     "apiDocs": "API Belgeleri",
-    "donate": "Bağış Yap",
-    "sponsors": "Sponsorlar",
     "hosts": "Host'lar",
     "docs": "Belgeler",
     "openMenu": "Menüyü aç",
@@ -2477,8 +2474,7 @@
         "nodeGuids": "Düğümler",
         "excludeFromSubTypes": "Formatlardan hariç tut",
         "verifyPeerCertByName": "Peer sertifikasını ada göre doğrula",
-        "inheritAddress": "Adresi devralır",
-        "echConfigList": "ECH yapılandırma listesi"
+        "inheritAddress": "Adresi devralır"
       },
       "hints": {
         "address": "Gelen bağlantının kendi adresini devralmak için boş bırakın.",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "0 ile 65535 arasında tek bir sayı girin"
       },
       "dragToReorder": "{name} öğesini yeniden sıralamak için sürükleyin"
-    },
-    "sponsors": {
-      "title": "Sponsorlar",
-      "intro": "Lx-ui geliştirmesini destekleyen şirketler. Sponsor bağlantıları yeni sekmede açılır.",
-      "become": "Sponsor ol",
-      "tag": "Sponsor",
-      "visit": "Ziyaret et",
-      "yourBrand": "Markanız burada",
-      "yourBrandText": "Şirketinizi her gün Lx-ui açan binlerce sunucu yöneticisinin önüne çıkarın."
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ İşlem hatası.\r\n\r\n<code>Hata: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core çalışmıyor.",
       "startDesc": "Ana menüyü göster",
-      "statusOk": "✅ Bot çalışıyor!",
-      "start": "👋 Merhaba <i>{{ .Firstname }}</i>.\r\n",
-      "welcome": "🤖 <b>{{ .Hostname }}</b> yönetim botuna hoş geldiniz.\r\n",
-      "status": "✅ Bot çalışıyor!",
-      "usage": "❗ Lütfen aramak için bir metin sağlayın!",
-      "helpDesc": "Bot yardımı",
-      "statusDesc": "Bot durumunu kontrol et",
-      "idDesc": "Telegram Kimliğinizi gösterir",
-      "usageDesc": "İstemci kullanımını göster: /usage e-posta",
-      "inboundDesc": "Gelenleri ara: /inbound ad (yönetici)",
-      "restartDesc": "Xray çekirdeğini yeniden başlat (yönetici)",
-      "broadcastDesc": "Tüm istemcilere mesaj gönder (yönetici)",
-      "clearallDesc": "Tüm istemcilerin trafiğini sıfırla (yönetici)"
+      "statusOk": "✅ Bot çalışıyor!"
     },
     "messages": {
       "cpuThreshold": "CPU Yükü ({{ .Percent }}%), {{ .Threshold }}% eşiğini aşıyor",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. JSON abonelik",
       "qrLegendLink": "{{ .Code }}. Uygulama bağlantısı {{ .App }}",
       "backupFailed": "Veritabanı okunamadı; yedek gönderilmedi.",
-      "privateOnly": "🤖 Bu bot yalnızca özel sohbette çalışır. Lütfen doğrudan mesajda açın.",
-      "inviteLink": "🔗 <code>{{ .Email }}</code> için davet bağlantısı:\r\n<code>{{ .Link }}</code>\r\n\r\nBağlantıyı ilk açan kişi bu istemciye bağlanır.\r\n",
-      "received_email": "📧📥 E-posta güncellendi.",
-      "received_comment": "💬📥 Yorum güncellendi.",
-      "using_default_value": "Tamam, varsayılan değeri kullanacağım. 😊"
+      "privateOnly": "🤖 Bu bot yalnızca özel sohbette çalışır. Lütfen doğrudan mesajda açın."
     },
     "buttons": {
       "closeKeyboard": "❌ Klavyeyi Kapat",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 Yayın",
       "attachInbound": "Inbound ekle ({{ .Count }})",
-      "attachDone": "✅ Tamam",
-      "clientUsage": "Kullanıcı İstatistikleri",
-      "commands": "Komutlar"
+      "attachDone": "✅ Tamam"
     },
     "answers": {
       "broadcastStarted": "🚀 Toplu gönderim başladı.",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ Klavye kapatıldı!"
+    }
   },
   "discord": {
     "test": {

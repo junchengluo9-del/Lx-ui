@@ -107,8 +107,7 @@
     "support": "Soporte",
     "qrTitle": "Escanea. Importa. Conéctate.",
     "qrHint": "Escanéalo con tu aplicación cliente. Mantén este código en privado.",
-    "saveQr": "Guardar QR",
-    "individualLinks": "Enlaces individuales"
+    "saveQr": "Guardar QR"
   },
   "menu": {
     "theme": "Tema",
@@ -122,8 +121,6 @@
     "routing": "Enrutamiento",
     "outbounds": "Salidas",
     "apiDocs": "Documentación de la API",
-    "donate": "Donar",
-    "sponsors": "Patrocinadores",
     "hosts": "Hosts",
     "docs": "Documentación",
     "openMenu": "Abrir menú",
@@ -2477,8 +2474,7 @@
         "tags": "Etiquetas",
         "nodeGuids": "Nodos",
         "excludeFromSubTypes": "Excluir de formatos",
-        "inheritAddress": "Hereda dirección",
-        "echConfigList": "Lista de config. ECH"
+        "inheritAddress": "Hereda dirección"
       },
       "hints": {
         "address": "Déjalo en blanco para heredar la dirección propia del inbound.",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "Introduce un único número entre 0 y 65535"
       },
       "dragToReorder": "Arrastra para reordenar {name}"
-    },
-    "sponsors": {
-      "title": "Patrocinadores",
-      "intro": "Empresas que apoyan el desarrollo de Lx-ui. Los enlaces patrocinados se abren en una pestaña nueva.",
-      "become": "Hazte patrocinador",
-      "tag": "Patrocinador",
-      "visit": "Visitar",
-      "yourBrand": "Tu marca aquí",
-      "yourBrandText": "Muestra tu empresa a miles de administradores de servidores que abren Lx-ui cada día."
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ Error en la operación.\r\n\r\n<code>Error: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core no está en ejecución.",
       "startDesc": "Mostrar el menú principal",
-      "statusOk": "✅ ¡El bot funciona!",
-      "start": "👋 Hola <i>{{ .Firstname }}</i>.\r\n",
-      "welcome": "🤖 Bienvenido al bot de gestión de <b>{{ .Hostname }}</b>.\r\n",
-      "status": "✅ ¡El bot está bien!",
-      "usage": "❗ ¡Por favor proporciona un texto para buscar!",
-      "helpDesc": "Ayuda del bot",
-      "statusDesc": "Comprobar el estado del bot",
-      "idDesc": "Mostrar tu ID de Telegram",
-      "usageDesc": "Ver el uso del cliente: /usage correo",
-      "inboundDesc": "Buscar entradas: /inbound nombre (admin)",
-      "restartDesc": "Reiniciar el núcleo de Xray (admin)",
-      "broadcastDesc": "Enviar un mensaje a todos los clientes (admin)",
-      "clearallDesc": "Restablecer el tráfico de todos los clientes (admin)"
+      "statusOk": "✅ ¡El bot funciona!"
     },
     "messages": {
       "cpuThreshold": "El uso de CPU {{ .Percent }}% es mayor que el umbral {{ .Threshold }}%",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. Suscripción JSON",
       "qrLegendLink": "{{ .Code }}. Enlace de la app {{ .App }}",
       "backupFailed": "No se pudo leer la base de datos; no se envió ninguna copia de seguridad.",
-      "privateOnly": "🤖 Este bot solo funciona en el chat privado. Ábrelo en un mensaje directo.",
-      "inviteLink": "🔗 Enlace de invitación para <code>{{ .Email }}</code>:\r\n<code>{{ .Link }}</code>\r\n\r\nLa primera persona que lo abra quedará vinculada a este cliente.\r\n",
-      "received_email": "📧📥 Correo electrónico actualizado.",
-      "received_comment": "💬📥 Comentario actualizado.",
-      "using_default_value": "Está bien, me quedaré con el valor predeterminado. 😊"
+      "privateOnly": "🤖 Este bot solo funciona en el chat privado. Ábrelo en un mensaje directo."
     },
     "buttons": {
       "closeKeyboard": "❌ Cerrar Teclado",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 Difusión",
       "attachInbound": "Adjuntar entrada ({{ .Count }})",
-      "attachDone": "✅ Listo",
-      "clientUsage": "Obtener Uso",
-      "commands": "Comandos"
+      "attachDone": "✅ Listo"
     },
     "answers": {
       "broadcastStarted": "🚀 Difusión iniciada.",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ Teclado cerrado!"
+    }
   },
   "discord": {
     "test": {

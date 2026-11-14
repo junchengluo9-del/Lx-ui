@@ -122,8 +122,6 @@
     "routing": "Smerovanie",
     "outbounds": "Výstupy",
     "apiDocs": "Dokumentácia API",
-    "donate": "Podporiť projekt",
-    "sponsors": "Sponzori",
     "docs": "Dokumentácia",
     "openMenu": "Otvoriť menu",
     "pinSidebar": "Pripnúť bočné menu",
@@ -300,7 +298,25 @@
       "importKeepHostSettings": "Ponechať nastavenia tohto servera",
       "importKeepHostSettingsDesc": "Ponechajú sa adresy počúvania, porty, základná cesta, certifikáty a identita tohto servera namiesto nastavení z nahraného súboru.",
       "logLines": "Počet riadkov",
-      "timeRange": "Časový rozsah"
+      "timeRange": "Časový rozsah",
+      "xrayTier": {
+        "recommended": "Recommended",
+        "verified": "Verified",
+        "experimental": "Experimental"
+      },
+      "xrayRealityGate": {
+        "mlkem": "REALITY: ML-KEM only",
+        "minver": "REALITY: min client 26.3.27"
+      },
+      "xrayRealityGateTip": {
+        "mlkem": "Xray v26.9.8+ silently rejects REALITY clients whose TLS ClientHello has no X25519MLKEM768 key share (Shadowrocket, sing-box, Mihomo raw links, fingerprints like ios/edge/random). The node looks online but carries no traffic. Use a current Xray-core client with fp=chrome, or pick a core without this gate (e.g. v26.6.27).",
+        "minver": "Xray v26.7.11–v26.9.7 treat an empty Min Client Ver as 26.3.27 and reject REALITY clients reporting an older version (Shadowrocket, Mihomo, sing-box). Set Min Client Ver explicitly (e.g. 1.0) on REALITY inbounds if you use this core."
+      },
+      "xraySwitchGateWarn": {
+        "mlkem": "This core (Xray v26.9.8+) requires ML-KEM-capable clients: only current Xray-core clients (v2rayN/v2rayNG, fp chrome) and Mihomo with support-x25519mlkem768 can connect. Shadowrocket, older Clash and sing-box will NOT work (online but no traffic). The client-compatible core is v26.6.27. Switch to #version# anyway?",
+        "minver": "This core (v26.7.11–v26.9.7) rejects clients that do not report an Xray version by default: Shadowrocket, Clash/Mihomo and sing-box will NOT work. The client-compatible core is v26.6.27. Switch to #version# anyway?"
+      },
+      "xraySwitchAnyway": "Switch anyway"
     },
     "inbounds": {
       "totalDownUp": "Celkom odoslané/prijaté",
@@ -784,7 +800,8 @@
         "autoSystemWfpBlockLeakTooltip": "Iba pre Windows s automatickými systémovými trasami: all zablokuje všetko mimo TUN, allexceptlan tiež, ale ponechá dostupnú lokálnu sieť; dns ponechá DNS (porty 53 a 853 a službu DNS Client) v TUN; windnsclient pokrýva iba túto službu; tcp, udp a icmp blokujú celý protokol; pre konkrétne porty zadajte tcp/PORT, udp/PORT, samotný PORT alebo rozsah OD-DO; CIDR na začiatku (1.1.1.0/24:53, [::/0]:all) obmedzí hodnotu na tieto adresy; misconfigtun zablokuje verziu IP, pre ktorú nevedie žiadna trasa do TUN. Každá hodnota pokrývajúca port 53 vyžaduje DNS servery.",
         "maxVersion": "Maximálna verzia",
         "headerName": "Názov hlavičky",
-        "headerValue": "Hodnota hlavičky"
+        "headerValue": "Hodnota hlavičky",
+        "echConfig": "ECH config"
       },
       "info": {
         "mode": "Režim",
@@ -1980,7 +1997,15 @@
       "subHostSortMode": "Poradie uzlov v predplatnom",
       "subHostSortInbound": "Poradie inboundov (predvolené)",
       "subHostSortHosts": "Poradie hostiteľov",
-      "subHostSortModeDesc": "Poradie hostiteľov sa riadi stránkou Hostitelia naprieč inboundmi. Určuje poradie, ktoré odosiela server; klientske aplikácie môžu použiť vlastné triedenie."
+      "subHostSortModeDesc": "Poradie hostiteľov sa riadi stránkou Hostitelia naprieč inboundmi. Určuje poradie, ktoré odosiela server; klientske aplikácie môžu použiť vlastné triedenie.",
+      "nodeHeartbeatInterval": "Node Heartbeat Interval (s)",
+      "nodeHeartbeatIntervalDesc": "How often the panel probes each node's health (5-300 s, default 5). Node-down alerts count failed probes, so a longer interval also delays them. Applies after a panel restart.",
+      "nodeTrafficInterval": "Node Traffic Sync Interval (s)",
+      "nodeTrafficIntervalDesc": "How often the panel pulls traffic, online users and config state from each node (5-300 s, default 5). Raise it on large fleets to cut master CPU and bandwidth; quotas are enforced later accordingly. Applies after a panel restart.",
+      "nodeSyncJitter": "Node Sync Jitter (s)",
+      "nodeSyncJitterDesc": "Random extra delay (0-60 s, capped at the interval) added to each node heartbeat and traffic tick so polls don't line up with other periodic work. 0 disables it. Applies after a panel restart.",
+      "xrayAllowExperimental": "Allow Experimental Xray Versions",
+      "xrayAllowExperimentalDesc": "Also list and allow installing Xray releases that were not verified with this panel build (usually newer than the recommended one). Each install is still validated first and rolled back automatically if the new core cannot start."
     },
     "xray": {
       "save": "Uložiť",
@@ -2513,15 +2538,6 @@
       "routingScript": "Skript smerovania",
       "routingScriptDesc": "Cesta k súboru .lua s funkciou HandleRoute, absolútna alebo vzhľadom na priečinok bin Xray. Skript vyberá každú trasu a Xray ignoruje všetky pravidlá vrátane pravidla api panelu. Vstup api preto smerujte na výstup api, inak prestanú fungovať štatistiky spotreby aj zmeny klientov za behu. Ak súbor chýba alebo je neplatný, Xray sa nespustí.",
       "routingScriptActive": "V časti {section} je nastavený skript smerovania, preto Xray tieto pravidlá ignoruje."
-    },
-    "sponsors": {
-      "title": "Sponzori",
-      "intro": "Spoločnosti podporujúce vývoj Lx-ui. Sponzorované odkazy sa otvoria na novej karte.",
-      "become": "Stať sa sponzorom",
-      "tag": "Sponzor",
-      "visit": "Navštíviť",
-      "yourBrand": "Miesto pre vašu značku",
-      "yourBrandText": "Predstavte svoju spoločnosť tisícom správcov serverov, ktorí denne otvárajú Lx-ui."
     }
   },
   "tgbot": {

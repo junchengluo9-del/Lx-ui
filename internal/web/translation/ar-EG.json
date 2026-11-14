@@ -107,8 +107,7 @@
     "support": "الدعم",
     "qrTitle": "امسح. استورد. اتصل.",
     "qrHint": "امسح الرمز بتطبيق العميل. لا تشارك هذا الرمز مع أحد.",
-    "saveQr": "حفظ QR",
-    "individualLinks": "روابط فردية"
+    "saveQr": "حفظ QR"
   },
   "menu": {
     "theme": "الثيم",
@@ -122,8 +121,6 @@
     "routing": "التوجيه",
     "outbounds": "الصادرات",
     "apiDocs": "توثيق API",
-    "donate": "تبرع",
-    "sponsors": "الرعاة",
     "hosts": "المضيفات",
     "docs": "التوثيق",
     "openMenu": "فتح القائمة",
@@ -2477,8 +2474,7 @@
         "nodeGuids": "النودز",
         "excludeFromSubTypes": "استبعاد من الصيغ",
         "verifyPeerCertByName": "التحقق من شهادة النظير بالاسم",
-        "inheritAddress": "يرث العنوان",
-        "echConfigList": "قائمة إعدادات ECH"
+        "inheritAddress": "يرث العنوان"
       },
       "hints": {
         "address": "اتركه فارغاً ليرث عنوان الوارد نفسه.",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "أدخل رقماً واحداً بين 0 و65535"
       },
       "dragToReorder": "اسحب لتغيير ترتيب {name}"
-    },
-    "sponsors": {
-      "title": "الرعاة",
-      "intro": "شركات تدعم تطوير Lx-ui. تُفتح روابط الرعاة في علامة تبويب جديدة.",
-      "become": "كن راعيًا",
-      "tag": "راعٍ",
-      "visit": "زيارة",
-      "yourBrand": "علامتك التجارية هنا",
-      "yourBrandText": "ضع شركتك أمام آلاف مسؤولي الخوادم الذين يفتحون Lx-ui كل يوم."
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ حصل خطأ في العملية.\r\n\r\n<code>Error: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core مش شغال.",
       "startDesc": "عرض القائمة الرئيسية",
-      "statusOk": "✅ البوت يعمل!",
-      "start": "👋 أهلا <i>{{ .Firstname }}</i>.\r\n",
-      "welcome": "🤖 أهلا بيك في بوت إدارة <b>{{ .Hostname }}</b>.\r\n",
-      "status": "✅ البوت شغال!",
-      "usage": "❗ من فضلك ادخل نص للتبحث عنه!",
-      "helpDesc": "مساعدة البوت",
-      "statusDesc": "التحقق من حالة البوت",
-      "idDesc": "عرض معرف Telegram الخاص بك",
-      "usageDesc": "عرض استهلاك العميل: /usage البريد",
-      "inboundDesc": "البحث في الواردات: /inbound الاسم (مشرف)",
-      "restartDesc": "إعادة تشغيل نواة Xray (مشرف)",
-      "broadcastDesc": "إرسال رسالة لجميع العملاء (مسؤول)",
-      "clearallDesc": "تصفير استهلاك جميع العملاء (مشرف)"
+      "statusOk": "✅ البوت يعمل!"
     },
     "messages": {
       "cpuThreshold": "حمل المعالج {{ .Percent }}% عدى الحد المسموح ({{ .Threshold }}%)",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. اشتراك JSON",
       "qrLegendLink": "{{ .Code }}. رابط التطبيق {{ .App }}",
       "backupFailed": "فشل قراءة قاعدة البيانات؛ لم يُرسل أي نسخة احتياطية.",
-      "privateOnly": "🤖 يعمل هذا البوت في المحادثة الخاصة فقط. يرجى فتحه في رسالة مباشرة.",
-      "inviteLink": "🔗 رابط الدعوة لـ <code>{{ .Email }}</code>:\r\n<code>{{ .Link }}</code>\r\n\r\nأول شخص يفتحه سيتم ربطه بهذا العميل.\r\n",
-      "received_email": "📧📥 الإيميل اتحدث.",
-      "received_comment": "💬📥 التعليق اتحدث.",
-      "using_default_value": "تمام، هشيل على القيمة الافتراضية. 😊"
+      "privateOnly": "🤖 يعمل هذا البوت في المحادثة الخاصة فقط. يرجى فتحه في رسالة مباشرة."
     },
     "buttons": {
       "closeKeyboard": "❌ اقفل الكيبورد",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 بث",
       "attachInbound": "إرفاق مدخل ({{ .Count }})",
-      "attachDone": "✅ تم",
-      "clientUsage": "استخدام العميل",
-      "commands": "الأوامر"
+      "attachDone": "✅ تم"
     },
     "answers": {
       "broadcastStarted": "🚀 بدأ البث.",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ لوحة المفاتيح مغلقة!"
+    }
   },
   "discord": {
     "test": {

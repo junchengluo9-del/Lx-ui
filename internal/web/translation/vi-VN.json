@@ -107,8 +107,7 @@
     "support": "Hỗ trợ",
     "qrTitle": "Quét. Nhập. Kết nối.",
     "qrHint": "Quét bằng ứng dụng khách. Không chia sẻ mã này cho người khác.",
-    "saveQr": "Lưu QR",
-    "individualLinks": "Liên kết riêng lẻ"
+    "saveQr": "Lưu QR"
   },
   "menu": {
     "theme": "Chủ đề",
@@ -122,8 +121,6 @@
     "routing": "Định tuyến",
     "outbounds": "Outbound",
     "apiDocs": "Tài liệu API",
-    "donate": "Quyên góp",
-    "sponsors": "Nhà tài trợ",
     "hosts": "Hosts",
     "docs": "Tài liệu",
     "openMenu": "Mở menu",
@@ -2477,8 +2474,7 @@
         "tags": "Tag",
         "nodeGuids": "Nút",
         "excludeFromSubTypes": "Loại trừ khỏi định dạng",
-        "inheritAddress": "Kế thừa địa chỉ",
-        "echConfigList": "Danh sách cấu hình ECH"
+        "inheritAddress": "Kế thừa địa chỉ"
       },
       "hints": {
         "address": "Để trống để kế thừa địa chỉ của chính inbound.",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "Nhập một số duy nhất từ 0 đến 65535"
       },
       "dragToReorder": "Kéo để sắp xếp lại {name}"
-    },
-    "sponsors": {
-      "title": "Nhà tài trợ",
-      "intro": "Các công ty hỗ trợ phát triển Lx-ui. Liên kết tài trợ mở trong tab mới.",
-      "become": "Trở thành nhà tài trợ",
-      "tag": "Tài trợ",
-      "visit": "Truy cập",
-      "yourBrand": "Thương hiệu của bạn ở đây",
-      "yourBrandText": "Đưa công ty bạn đến hàng nghìn quản trị viên máy chủ mở Lx-ui mỗi ngày."
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ Lỗi trong quá trình hoạt động.\r\n\r\n<code>Lỗi: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core không chạy.",
       "startDesc": "Hiển thị menu chính",
-      "statusOk": "✅ Bot hoạt động bình thường!",
-      "start": "👋 Xin chào <i>{{ .Firstname }}</i>.\r\n",
-      "welcome": "🤖 Chào mừng đến với bot quản lý của <b>{{ .Hostname }}</b>.\r\n",
-      "status": "✅ Bot hoạt động bình thường!",
-      "usage": "❗ Vui lòng cung cấp văn bản để tìm kiếm!",
-      "helpDesc": "Trợ giúp bot",
-      "statusDesc": "Kiểm tra trạng thái bot",
-      "idDesc": "Hiển thị ID Telegram của bạn",
-      "usageDesc": "Xem mức dùng của khách: /usage email",
-      "inboundDesc": "Tìm inbound: /inbound tên (quản trị)",
-      "restartDesc": "Khởi động lại lõi Xray (quản trị)",
-      "broadcastDesc": "Gửi tin nhắn tới tất cả khách hàng (quản trị)",
-      "clearallDesc": "Đặt lại lưu lượng mọi khách hàng (quản trị)"
+      "statusOk": "✅ Bot hoạt động bình thường!"
     },
     "messages": {
       "cpuThreshold": "Sử dụng CPU {{ .Percent }}% vượt quá ngưỡng {{ .Threshold }}%",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. Gói đăng ký JSON",
       "qrLegendLink": "{{ .Code }}. Liên kết ứng dụng {{ .App }}",
       "backupFailed": "Không đọc được cơ sở dữ liệu; không có bản sao lưu nào được gửi.",
-      "privateOnly": "🤖 Bot này chỉ hoạt động trong trò chuyện riêng. Hãy mở nó trong tin nhắn trực tiếp.",
-      "inviteLink": "🔗 Liên kết mời cho <code>{{ .Email }}</code>:\r\n<code>{{ .Link }}</code>\r\n\r\nNgười đầu tiên mở nó sẽ được liên kết với client này.\r\n",
-      "received_email": "📧📥 Email đã được cập nhật.",
-      "received_comment": "💬📥 Bình luận đã được cập nhật.",
-      "using_default_value": "Được rồi, tôi sẽ sử dụng giá trị mặc định. 😊"
+      "privateOnly": "🤖 Bot này chỉ hoạt động trong trò chuyện riêng. Hãy mở nó trong tin nhắn trực tiếp."
     },
     "buttons": {
       "closeKeyboard": "❌ Đóng Bàn Phím",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 Phát tin",
       "attachInbound": "Đính kèm inbound ({{ .Count }})",
-      "attachDone": "✅ Xong",
-      "clientUsage": "Lấy Sử Dụng",
-      "commands": "Lệnh"
+      "attachDone": "✅ Xong"
     },
     "answers": {
       "broadcastStarted": "🚀 Đã bắt đầu phát tin.",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ Bàn phím đã đóng!"
+    }
   },
   "discord": {
     "test": {

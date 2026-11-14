@@ -107,8 +107,7 @@
     "support": "Suporte",
     "qrTitle": "Escaneie. Importe. Conecte.",
     "qrHint": "Escaneie com seu aplicativo cliente. Mantenha este código em sigilo.",
-    "saveQr": "Salvar QR",
-    "individualLinks": "Links individuais"
+    "saveQr": "Salvar QR"
   },
   "menu": {
     "theme": "Tema",
@@ -122,8 +121,6 @@
     "routing": "Roteamento",
     "outbounds": "Saídas",
     "apiDocs": "Documentação da API",
-    "donate": "Doar",
-    "sponsors": "Patrocinadores",
     "hosts": "Hosts",
     "docs": "Documentação",
     "openMenu": "Abrir menu",
@@ -2477,8 +2474,7 @@
         "tags": "Tags",
         "nodeGuids": "Nós",
         "excludeFromSubTypes": "Excluir dos formatos",
-        "inheritAddress": "Herda endereço",
-        "echConfigList": "Lista de configurações ECH"
+        "inheritAddress": "Herda endereço"
       },
       "hints": {
         "address": "Deixe em branco para herdar o próprio endereço da entrada.",
@@ -2542,15 +2538,6 @@
         "badVlessRoute": "Insira um único número entre 0 e 65535"
       },
       "dragToReorder": "Arraste para reordenar {name}"
-    },
-    "sponsors": {
-      "title": "Patrocinadores",
-      "intro": "Empresas que apoiam o desenvolvimento do Lx-ui. Links patrocinados abrem em uma nova aba.",
-      "become": "Seja um patrocinador",
-      "tag": "Patrocinador",
-      "visit": "Visitar",
-      "yourBrand": "Sua marca aqui",
-      "yourBrandText": "Coloque sua empresa diante de milhares de administradores de servidores que abrem o Lx-ui todos os dias."
     }
   },
   "tgbot": {
@@ -2583,19 +2570,7 @@
       "restartFailed": "❗ Erro na operação.\r\n\r\n<code>Erro: {{ .Error }}</code>.",
       "xrayNotRunning": "❗ Xray Core não está em execução.",
       "startDesc": "Mostrar menu principal",
-      "statusOk": "✅ O bot está OK!",
-      "start": "👋 Olá <i>{{ .Firstname }}</i>.\r\n",
-      "welcome": "🤖 Bem-vindo ao bot de gerenciamento do <b>{{ .Hostname }}</b>.\r\n",
-      "status": "✅ Bot está OK!",
-      "usage": "❗ Por favor, forneça um texto para pesquisar!",
-      "helpDesc": "Ajuda do bot",
-      "statusDesc": "Verificar status do bot",
-      "idDesc": "Mostrar seu ID do Telegram",
-      "usageDesc": "Ver o uso do cliente: /usage email",
-      "inboundDesc": "Buscar entradas: /inbound nome (admin)",
-      "restartDesc": "Reiniciar o núcleo Xray (admin)",
-      "broadcastDesc": "Enviar uma mensagem para todos os clientes (admin)",
-      "clearallDesc": "Zerar o tráfego de todos os clientes (admin)"
+      "statusOk": "✅ O bot está OK!"
     },
     "messages": {
       "cpuThreshold": "A carga da CPU {{ .Percent }}% excede o limite de {{ .Threshold }}%",
@@ -2691,11 +2666,7 @@
       "qrLegendJSON": "{{ .Code }}. Assinatura JSON",
       "qrLegendLink": "{{ .Code }}. Link do app {{ .App }}",
       "backupFailed": "Não foi possível ler o banco de dados; nenhum backup foi enviado.",
-      "privateOnly": "🤖 Este bot funciona apenas no chat privado. Abra-o em uma mensagem direta.",
-      "inviteLink": "🔗 Link de convite para <code>{{ .Email }}</code>:\r\n<code>{{ .Link }}</code>\r\n\r\nA primeira pessoa que abri-lo será vinculada a este cliente.\r\n",
-      "received_email": "📧📥 E-mail atualizado.",
-      "received_comment": "💬📥 Comentário atualizado.",
-      "using_default_value": "Tudo bem, vou manter o valor padrão. 😊"
+      "privateOnly": "🤖 Este bot funciona apenas no chat privado. Abra-o em uma mensagem direta."
     },
     "buttons": {
       "closeKeyboard": "❌ Fechar teclado",
@@ -2755,9 +2726,7 @@
       "qrCode": "🔳 QR code",
       "broadcast": "📢 Transmissão",
       "attachInbound": "Anexar inbound ({{ .Count }})",
-      "attachDone": "✅ Concluído",
-      "clientUsage": "Obter uso",
-      "commands": "Comandos"
+      "attachDone": "✅ Concluído"
     },
     "answers": {
       "broadcastStarted": "🚀 Transmissão iniciada.",
@@ -2815,8 +2784,7 @@
     "noValue": "—",
     "notices": {
       "repeat": "\r\n\r\n🔁 repeated {{ .Count }}× · last {{ .Time }}"
-    },
-    "keyboardClosed": "❌ Teclado fechado!"
+    }
   },
   "discord": {
     "test": {
