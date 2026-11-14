@@ -254,3 +254,85 @@ First stable release after 1.0.0. Summary of the fixes since 1.0.0:
 - Security: `github.com/klauspost/compress` v1.20.2 (GO-2026-6865) and
   `github.com/andybalholm/brotli` v1.2.7 (GO-2026-6888).
 - No functional change; bundled Xray stays v26.6.27.
+
+## 2026-11-14 — sync with upstream v3.11.0 (development branch, no release tag)
+
+Lx-ui now tracks upstream `5297fd3c` (v3.11.0 plus 244 commits, 892 files
+changed). This is a modification of upstream code, so it is recorded here even
+though no release tag was cut with it. The sync was merged from upstream's
+tree with the rebranded version of every conflicted file as the starting point,
+then Lx-ui's own delta re-applied on top (see `docs/UPSTREAM_SYNC.md`).
+
+Included: everything upstream shipped since the fork point that is a bug fix,
+security fix, performance fix or feature — the web/API hardening series
+(input bounds, CSRF/session handling, login throttling, connection caps),
+subscription rendering and external-subscription trust, node push/answer
+budgets and lifecycle fixes, TUIC and AmneziaWG resource bounds, traffic
+accounting fixes (reset, quota re-enable, hand-disabled clients), SQLite and
+Postgres parity, Xray-core compatibility work (XDRIVE, TUN WFP values, mux
+notes, XHTTP h2Params, geodata refusals, freedom finalRules), the screen-based
+Telegram bot rewrite, per-client host rules, SNI pools, subscription ordering,
+the single route manifest, the Slovak locale, and upstream's documentation.
+
+Kept as Lx-ui's own (not upstream's):
+
+- The bundled Xray-core stays **v26.6.27** (client compatible: no REALITY
+  ML-KEM gate), with the recommended/verified/experimental tiers, the REALITY
+  gate labels, the pre-update validation and the automatic rollback on a core
+  that will not start (#6871). Upstream now ships v26.11.9; that version is
+  still installable from the panel as an experimental core.
+- `nodeHeartbeatInterval` / `nodeTrafficInterval` / `nodeSyncJitter` and the
+  unchanged-payload push skip (#6541).
+- `update.sh` keeps the installed core by default (`KEEP_XRAY`), and
+  `install.sh`/`update.sh` still fall back to the `dev-latest` prerelease when
+  no stable release exists.
+- The 3x-ui → Lx-ui migration path (`/etc/x-ui` copy on first start and
+  `install.sh --migrate-from-3x-ui`) is unchanged.
+
+Replaced by upstream's own fix (Lx-ui's parallel code removed):
+
+- TUIC per-user routing: upstream's #6875 keeps one SOCKS account per client
+  email and adds a relay policy level so relayed traffic is not billed twice.
+  Lx-ui's `RelayAccountEmails`/`RecordRelayAccounts`/`RelayAccountsCover` and
+  their tests are gone; `internal/tuic/xray_user_routing_test.go` exercises the
+  new signature.
+- Node-disable latch (#6870): `nodeDisableIsStale` and
+  `ClientTrafficEnableMergeExpr` are upstream's; Lx-ui's regression test was
+  adapted to the new arguments.
+- Quota/disabled-client reset logic, the serialized traffic writer helpers and
+  the clash HTTP-header obfs mapping follow upstream's newer implementations.
+
+Excluded: the sponsor module (`/sponsors`, `SponsorCard`, `SponsorSlot`, the
+sponsor API/service and its logo-cache fix), donations (sidebar donate button,
+`donate.sanaei.dev`), upstream's non-English READMEs, upstream's `CLAUDE.md` /
+`.github/claude/*` AI workflows, and every upstream download/update/image URL
+that the rebrand guard rejects.
+
+Adaptations worth knowing when reviewing upstream later:
+
+- `internal/web/service/server_xray_update_test.go` (upstream's end-to-end
+  `UpdateXray` test) now feeds a fake core that answers `xray version` and
+  expects Lx-ui's validation-then-rollback outcome; upstream's own test assumed
+  the old "swap, then fail" flow.
+- `TestUpdateXray` uses v26.7.28 rather than v26.7.1, because v26.7.1 is below
+  the panel's verified set and would be refused as experimental.
+- `internal/tuic/socks_bridge_test.go` lost the tests of the removed relay
+  helpers.
+- Locale files are upstream's plus the 35 Lx-ui-only keys (`xrayTier`,
+  `xrayRealityGate`, `xrayRealityGateTip`, `xraySwitchGateWarn`, the node sync
+  settings, and the Xray switch warnings).
+- `docs/public/openapi.json` is regenerated together with
+  `frontend/public/openapi.json`, so `make docs-openapi-check` keeps passing.
+
+Verification on this box (Linux amd64, Go 1.27.4, Node 26.13.1, TypeScript 7):
+`go build ./...`, `go vet ./...`, `tools/check-rebrand.sh`, `npm run gen`
+(no drift: generated schemas + OpenAPI regenerated from the merged Go sources),
+`tsc --noEmit` and `vite build` are green; `go test` passes for
+`internal/config`, `internal/xray` (+ dnsconf, geodata), `internal/tuic`,
+`internal/sub`, `internal/database`, `internal/web/job`, `internal/web/runtime`,
+`internal/web/service` (whole package), `internal/web/service/tgbot` and
+`internal/web/service/outbound`. Not run here: `internal/web/controller`,
+`internal/web/service/panel`, the amneziawg suites, `internal/util/*` beyond
+common/cronspec/crypto/json_util/ldap, `node-e2e`, Postgres, oxlint (the binary
+aborts in this sandbox), vitest (worker threads cannot start) and Storybook;
+GitHub Actions covers those on the pull request.

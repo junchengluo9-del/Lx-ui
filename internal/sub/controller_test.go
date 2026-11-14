@@ -803,6 +803,32 @@ func TestLegacyClashEndpointNormalizesShadowsocksCipher(t *testing.T) {
 	}
 }
 
+// #7105: only Happ and INCY read the tail; other clients show it in the node name.
+func TestRawSubServerDescriptionByClient(t *testing.T) {
+	seedSubDB(t)
+	seedSubInbound(t, "s1", "vl", 4492, 1, `{"network":"tcp","security":"none","externalProxy":[{"forceTls":"same","dest":"a.example.com","port":443,"remark":"A","serverDescription":"Berlin"}]}`)
+	gin.SetMode(gin.TestMode)
+
+	cases := map[string]bool{"Happ/3.1": true, "INCY/1.0.0/ios": true, "v2rayN/7.10": false}
+	for userAgent, wantTail := range cases {
+		t.Run(userAgent, func(t *testing.T) {
+			router := gin.New()
+			NewSUBController(router.Group("/"), WithSUBEncryption(false))
+			req := httptest.NewRequest(http.MethodGet, "http://sub.example.com/sub/s1", nil)
+			req.Header.Set("User-Agent", userAgent)
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
+			body := resp.Body.String()
+			if resp.Code != http.StatusOK || !strings.Contains(body, "vless") {
+				t.Fatalf("status=%d, body=%s", resp.Code, body)
+			}
+			if got := strings.Contains(body, "?serverDescription=QmVybGlu"); got != wantTail {
+				t.Fatalf("tail present = %v, want %v; body=%s", got, wantTail, body)
+			}
+		})
+	}
+}
+
 func TestIncyRoutingIsolatedFromHappHeaders(t *testing.T) {
 	seedSubDB(t)
 	seedSubInbound(t, "s1", "vl", 4492, 1, `{"network":"tcp","security":"none"}`)
@@ -853,6 +879,34 @@ func TestIncyRoutingIsolatedFromHappHeaders(t *testing.T) {
 			}
 			if got := strings.HasSuffix(body, incyRules+"\n"); got != tc.wantIncyLine || (!got && strings.Contains(body, incyRules)) {
 				t.Fatalf("incy line at body end = %v, want %v; body=%s", got, tc.wantIncyLine, body)
+			}
+		})
+	}
+}
+
+// Each route group serves live per-subscriber data; a group registered without the no-store
+// middleware lets a cache in front of the sub server hand out stale traffic and routing.
+func TestSubscriptionRouteGroupsAreNotCacheable(t *testing.T) {
+	seedSubDB(t)
+	seedSubInbound(t, "s1", "cache", 4482, 1, `{"network":"tcp","security":"none"}`)
+	gin.SetMode(gin.TestMode)
+	oldDistFS := distFS
+	distFS = testDistFS
+	t.Cleanup(func() { distFS = oldDistFS })
+	router := newSubscriptionTestRouter(subscriptionTestRouterConfig{})
+
+	for _, path := range []string{"/sub/s1", "/json/s1", "/clash/s1", "/mihomo/s1", "/clash-legacy/s1"} {
+		t.Run(path, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "http://sub.example.com"+path, nil)
+			req.Header.Set("User-Agent", "curl/8.0")
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
+
+			if resp.Code == http.StatusNotFound {
+				t.Fatalf("route %s is not registered", path)
+			}
+			if cc := resp.Header().Get("Cache-Control"); !strings.Contains(cc, "no-store") {
+				t.Fatalf("Cache-Control = %q (status %d), want a no-store directive", cc, resp.Code)
 			}
 		})
 	}

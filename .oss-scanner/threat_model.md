@@ -69,8 +69,8 @@ responses for limited tokens, or node sync payloads.
 - Frontend: `cd /src/frontend && npx vitest run --project unit --project components`.
   The Storybook browser project needs Chromium and is not provisioned.
 - Running a live panel: `XUI_DB_FOLDER=/tmp/xui XUI_LOG_FOLDER=/tmp/xui
-  XUI_BIN_FOLDER=/src/build/bin lx-ui` (creates `admin`/`admin` on first start;
-  `lx-ui setting -h` changes port, base path and credentials).
+  XUI_BIN_FOLDER=/src/build/bin lx-ui` (logs a generated username and password on
+  first start; `lx-ui setting -h` changes port, base path and credentials).
 - Baseline logs from the image build: `/src/.oss-scanner-go-test.log` and
   `/src/.oss-scanner-vitest.log`. A built image does not prove the tests passed.
 - PostgreSQL is not installed: tests gated on `XUI_TEST_PG_DSN` skip, so a

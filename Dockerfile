@@ -15,6 +15,7 @@ RUN npm run build
 FROM golang:1.27-alpine AS builder
 WORKDIR /app
 ARG TARGETARCH
+ARG TARGETVARIANT
 
 RUN apk --no-cache --update add \
   build-base \
@@ -32,7 +33,7 @@ ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 # clear message instead of pointing at a placeholder.
 ARG LXUI_RELEASE_REPO=""
 RUN go build -ldflags "-w -s -X github.com/mhsanaei/3x-ui/v3/internal/config.releaseRepo=${LXUI_RELEASE_REPO}" -o build/lx-ui .
-RUN ./DockerInit.sh "$TARGETARCH"
+RUN ./DockerInit.sh "$TARGETARCH" "$TARGETVARIANT"
 
 # ========================================================
 # Stage: Final Image of lx-ui

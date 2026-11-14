@@ -87,33 +87,22 @@ func (j *PeriodicTrafficResetJob) resetInboundsOnSchedule() {
 	logger.Infof("Running periodic traffic reset job for period: %s (%d matching inbounds)", j.period, len(inbounds))
 
 	var resetCount atomic.Int32
-	var mu sync.Mutex
-	var restore []string
+	var needRestart atomic.Bool
 	forEachResetBounded(len(inbounds), func(i int) {
 		inbound := inbounds[i]
-		resetInboundErr := j.inboundService.ResetInboundTraffic(inbound.Id)
+		nr, resetInboundErr := j.inboundService.ResetInboundTraffic(inbound.Id)
 		if resetInboundErr != nil {
 			logger.Warning("Failed to reset traffic for inbound", inbound.Id, ":", resetInboundErr)
+		} else if nr {
+			needRestart.Store(true)
 		}
 
-		// Read before the reset: zeroed counters make a client the quota switched
-		// off look like one switched off by hand, and only the former comes back.
-		cycles, cyclesErr := j.clientService.GetInboundClientResetCycles(inbound.Id)
-		if cyclesErr != nil {
-			logger.Warning("Failed to read clients of inbound", inbound.Id, ":", cyclesErr)
-		}
-
-		resetClientErr := j.clientService.ResetAllClientTraffics(&j.inboundService, inbound.Id)
+		nr, resetClientErr := j.clientService.ResetAllClientTraffics(&j.inboundService, inbound.Id)
 		if resetClientErr != nil {
 			logger.Warning("Failed to reset traffic for all users of inbound", inbound.Id, ":", resetClientErr)
-		} else {
-			mu.Lock()
-			for _, c := range cycles {
-				if !c.Enable && c.Depleted() {
-					restore = append(restore, c.Email)
-				}
-			}
-			mu.Unlock()
+		}
+		if nr {
+			needRestart.Store(true)
 		}
 
 		if resetInboundErr == nil && resetClientErr == nil {
@@ -121,14 +110,8 @@ func (j *PeriodicTrafficResetJob) resetInboundsOnSchedule() {
 		}
 	})
 
-	if len(restore) > 0 {
-		_, needRestart, err := j.clientService.BulkSetEnable(&j.inboundService, restore, true)
-		if err != nil {
-			logger.Warning("Failed to re-enable depleted clients after traffic reset:", err)
-		}
-		if needRestart {
-			j.xrayService.SetToNeedRestart()
-		}
+	if needRestart.Load() {
+		j.xrayService.SetToNeedRestart()
 	}
 
 	if count := resetCount.Load(); count > 0 {

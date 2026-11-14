@@ -83,6 +83,7 @@ var defaultValueMap = map[string]string{
 	"remarkTemplate":              DefaultRemarkTemplate,
 	"subShowIdentityOnAllLinks":   "false",
 	"subInfoNodeEnable":           "false",
+	"subHostSortMode":             "inbound-first",
 	"subCalendarExpireInclusive":  "false",
 	"subExpiredTemplate":          DefaultSubExpiredTemplate,
 	"subTrafficDepletedTemplate":  DefaultSubTrafficDepletedTemplate,
@@ -186,6 +187,7 @@ var defaultValueMap = map[string]string{
 	"subClashURI":                 "",
 	"subClashEnableRouting":       "false",
 	"subClashRules":               "",
+	"subClashRemoteDNS":           "false",
 	"subJsonMux":                  "",
 	"subJsonRules":                "",
 	"subJsonRoutingRules":         "",
@@ -773,6 +775,10 @@ func (s *SettingService) GetSubInfoNodeEnable() (bool, error) {
 	return s.getBool("subInfoNodeEnable")
 }
 
+func (s *SettingService) GetSubHostSortMode() (string, error) {
+	return s.getString("subHostSortMode")
+}
+
 func (s *SettingService) GetSubCalendarExpireInclusive() (bool, error) {
 	return s.getBool("subCalendarExpireInclusive")
 }
@@ -1247,6 +1253,10 @@ func (s *SettingService) GetSubClashRules() (string, error) {
 	return s.getString("subClashRules")
 }
 
+func (s *SettingService) GetSubClashRemoteDNS() (bool, error) {
+	return s.getBool("subClashRemoteDNS")
+}
+
 func (s *SettingService) GetSubJsonMux() (string, error) {
 	return s.getString("subJsonMux")
 }
@@ -1705,6 +1715,13 @@ type SecretClears struct {
 }
 
 func (s *SettingService) UpdateAllSetting(allSetting *entity.AllSetting, clears SecretClears) error {
+	switch allSetting.SubHostSortMode {
+	case "":
+		allSetting.SubHostSortMode = "inbound-first"
+	case "inbound-first", "hosts-first":
+	default:
+		return errors.New("subscription host sort mode must be inbound-first or hosts-first")
+	}
 	switch allSetting.SubProfileMode {
 	case "", SubProfileModeNone, SubProfileModeBuiltin, SubProfileModeCustom:
 		allSetting.SubProfileMode = effectiveSubProfileMode(allSetting.SubProfileMode, allSetting.SubProfileUrl)
@@ -1713,6 +1730,12 @@ func (s *SettingService) UpdateAllSetting(allSetting *entity.AllSetting, clears 
 	}
 	if err := s.preserveRedactedSecrets(allSetting, clears); err != nil {
 		return err
+	}
+	if allSetting.TwoFactorEnable {
+		if !totp.ValidSecret(allSetting.TwoFactorToken) {
+			return errors.New("two-factor secret must be a non-empty base32 key")
+		}
+		allSetting.TwoFactorToken = totp.NormalizeSecret(allSetting.TwoFactorToken)
 	}
 	if err := validateSettingsURLs(allSetting); err != nil {
 		return err
