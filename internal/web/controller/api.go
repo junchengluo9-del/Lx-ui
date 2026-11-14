@@ -106,8 +106,10 @@ var nodeSyncScopeAllow = map[string]map[string]struct{}{
 	"/inbounds/:id/subSortIndex":   {http.MethodPost: {}},
 	"/clients/add":                 {http.MethodPost: {}},
 	"/clients/del/:email":          {http.MethodPost: {}},
+	"/clients/del":                 {http.MethodPost: {}},
 	"/clients/:email/detach":       {http.MethodPost: {}},
 	"/clients/update/:email":       {http.MethodPost: {}},
+	"/clients/update":              {http.MethodPost: {}},
 	"/server/restartXrayService":   {http.MethodPost: {}},
 	"/server/getWebCertFiles":      {http.MethodGet: {}},
 	"/server/descendants":          {http.MethodGet: {}},
@@ -199,7 +201,7 @@ func (a *APIController) initRouter(g *gin.RouterGroup) {
 	// Decode + verify the node config envelope (zstd + X-Config-Sha256) and
 	// advertise support, before CSRF/handlers read the body.
 	api.Use(middleware.ConfigEnvelopeMiddleware())
-	api.Use(middleware.CSRFMiddleware())
+	api.Use(middleware.CSRFMiddleware(getRemoteIp))
 
 	api.GET("/openapi.json", ServeOpenAPISpec)
 

@@ -168,7 +168,7 @@ export default function BasicsTab({
   const items = [
     {
       key: '1',
-      label: catTabLabel(<SettingOutlined />, t('pages.xray.generalConfigs'), isMobile),
+      label: catTabLabel(<SettingOutlined aria-hidden />, t('pages.xray.generalConfigs'), isMobile),
       children: (
         <>
           <Alert
@@ -296,7 +296,7 @@ export default function BasicsTab({
     },
     {
       key: '2',
-      label: catTabLabel(<BarChartOutlined />, t('pages.xray.statistics'), isMobile),
+      label: catTabLabel(<BarChartOutlined aria-hidden />, t('pages.xray.statistics'), isMobile),
       children: (
         <>
           {[
@@ -351,7 +351,11 @@ export default function BasicsTab({
     },
     {
       key: 'connection',
-      label: catTabLabel(<ClockCircleOutlined />, t('pages.xray.connectionLimits'), isMobile),
+      label: catTabLabel(
+        <ClockCircleOutlined aria-hidden />,
+        t('pages.xray.connectionLimits'),
+        isMobile,
+      ),
       children: (
         <>
           <Alert
@@ -395,7 +399,7 @@ export default function BasicsTab({
     },
     {
       key: '3',
-      label: catTabLabel(<FileTextOutlined />, t('pages.xray.logConfigs'), isMobile),
+      label: catTabLabel(<FileTextOutlined aria-hidden />, t('pages.xray.logConfigs'), isMobile),
       children: (
         <>
           <Alert
@@ -410,12 +414,15 @@ export default function BasicsTab({
             paddings="small"
             control={
               <Select
-                value={(log.loglevel as string) || 'warning'}
+                value={((log.logLevel ?? log.loglevel) as string) || 'warning'}
                 style={{ width: '100%' }}
                 options={LOG_LEVELS.map((s) => ({ value: s, label: s }))}
                 onChange={(v) =>
                   mutate((tt) => {
-                    if (tt.log) tt.log.loglevel = v;
+                    if (!tt.log) return;
+                    // The core reads either spelling, so keeping both would let the stale one win.
+                    delete tt.log.loglevel;
+                    tt.log.logLevel = v;
                   })
                 }
               />
@@ -498,10 +505,19 @@ export default function BasicsTab({
     },
     {
       key: 'reset',
-      label: catTabLabel(<ReloadOutlined />, t('pages.settings.resetDefaultConfig'), isMobile),
+      label: catTabLabel(
+        <ReloadOutlined aria-hidden />,
+        t('pages.settings.resetDefaultConfig'),
+        isMobile,
+      ),
       children: (
         <Space style={{ padding: '0 20px' }}>
-          <Button type="primary" danger icon={<ReloadOutlined />} onClick={confirmResetDefault}>
+          <Button
+            type="primary"
+            danger
+            icon={<ReloadOutlined aria-hidden />}
+            onClick={confirmResetDefault}
+          >
             {t('pages.settings.resetDefaultConfig')}
           </Button>
         </Space>

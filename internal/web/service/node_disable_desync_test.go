@@ -124,10 +124,10 @@ func TestNodeDisableForExpiredClientLatches(t *testing.T) {
 
 func TestNodeDisableIsStaleUsesNodeEvidence(t *testing.T) {
 	master := &xray.ClientTraffic{ExpiryTime: lateAbs, Total: 1000, Up: 100, Down: 100}
-	if !nodeDisableIsStale(master, xray.ClientTraffic{ExpiryTime: lateAbs, Total: 1000, Up: 10, Down: 10}, 0, 0, 0) {
+	if !nodeDisableIsStale(master, 20, 0, 0, 0) {
 		t.Fatal("no evidence: must be stale")
 	}
-	if nodeDisableIsStale(master, xray.ClientTraffic{ExpiryTime: lateAbs, Total: 1000, Up: 600, Down: 400}, 0, 0, 0) {
+	if nodeDisableIsStale(master, 1000, 0, 0, 0) {
 		t.Fatal("node counters at the quota: verdict is genuine")
 	}
 }

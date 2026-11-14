@@ -22,11 +22,22 @@ Upstream: https://github.com/MHSanaei/3x-ui (git remote `upstream`, push disable
    re-run `tools/rebrand.sh` after the merge (it is idempotent).
 4. Record the new sync point below.
 
+For a large gap the procedure above is impractical (hundreds of commits touch
+the same files the rebrand rewrote), so the 2026-11-14 sync merged
+`upstream/main` directly into a `sync/*` branch and resolved conflicts with
+this method: for every conflicted file, start from the **rebranded** upstream
+version (apply `tools/rebrand.sh` to a worktree of `upstream/main`) and re-apply
+Lx-ui's own delta (rebranded base → `main`, i.e. `git diff <rebranded base>
+main -- <file>`). That keeps upstream's content authoritative while never losing
+a Lx-ui change, and leaves nothing for `tools/rebrand.sh` to guess at.
+`docs/LX_CHANGES.md` records what was kept, adapted or dropped.
+
 ## Sync points
 
-| Date (UTC+8) | Upstream commit | Notes                                |
-| ------------ | --------------- | ------------------------------------ |
-| 2026-10-19   | `a8d0700b`      | Fork point (v3.10.2 + #6859, #6666). |
+| Date (UTC+8) | Upstream commit | Notes                                                                                      |
+| ------------ | --------------- | ------------------------------------------------------------------------------------------ |
+| 2026-10-19   | `a8d0700b`      | Fork point (v3.10.2 + #6859, #6666).                                                       |
+| 2026-11-14   | `5297fd3c`      | v3.11.0 + 244 commits (245 total, 892 files). Sponsor/donate/branding excluded; see below. |
 
 ## Upstream pull requests merged into lx-base
 
@@ -55,3 +66,47 @@ lines), #6829 (superseded upstream by #6859), #6799 (conflicts), #6845
 (sponsor module is removed entirely in Lx-ui), #6847 (overlaps the planned
 Xray version pinning), plus large feature/draft PRs. See
 `/docs/LX_CHANGES.md`.
+
+## 2026-11-14 sync — what a later sync must not re-introduce
+
+All 12 PRs above are in `upstream/main` now (as `0729fc6d`, `07910bf6`,
+`5a135d2a`, `864cbd23`, `0b90dc2b`, `2b759f39`, `3acdfd9d`, `47be0635`,
+`1dbb3743`, `49c0600f`, `2f62dadd` and the i18next bump inside `775b2b0b`), so a
+sync no longer picks them separately — the merge brings them in once.
+
+Included from upstream (all of it, minus the list below):
+
+- v3.11.0 and the 2026-10/11 hardening series: web/API input bounds, CSRF and
+  session handling, login throttling, subscription rendering and external
+  subscription trust, node push/answer budgets, TUIC and AmneziaWG resource
+  bounds, traffic-accounting correctness, SQLite/Postgres parity, Xray-core
+  compatibility work (XDRIVE, TUN WFP, mux notes, XHTTP h2Params, geodata
+  refusals), the screen-based Telegram bot rewrite, the host/client rule
+  binding feature, SNI pools, drag-and-drop ordering, the route manifest, the
+  Slovak locale, and the docs.
+
+Excluded or replaced (do not merge these back):
+
+- **Sponsor module** — `/sponsors` page, `SponsorCard`, `SponsorSlot`, sponsor
+  API/service and `878d37c2` (sponsor logo cache). Lx-ui has no sponsor feed.
+- **Donations** — the sidebar donate button/`donate.sanaei.dev` link and the
+  `menu.donate` UI.
+- **Upstream branding** — non-English upstream READMEs (upstream ships
+  `README.ru_RU` etc.; Lx-ui keeps English + Chinese only), upstream
+  `CLAUDE.md` / `.github/claude/*` AI workflows (removed in milestone 1).
+- **Bundled Xray-core** — upstream pins v26.10.31/v26.11.9 in `release.yml` and
+  `DockerInit.sh`; Lx-ui keeps its client-compatible v26.6.27 pin
+  (`xray.RecommendedXrayVersion`), with newer cores installable from the panel.
+  `TestRecommendedXrayVersionMatchesPins` fails if the two drift.
+- **TUIC per-user routing** — Lx-ui's #6874 implementation
+  (`RelayAccountEmails`/`RecordRelayAccounts`/`RelayAccountsCover`) is replaced
+  by upstream's #6875 (`SocksInboundSettings(emails, password, userLevel)` plus
+  the relay policy level, which also stops double billing). Lx-ui's parallel
+  helpers and their tests were dropped.
+- **Node-disable latch (#6870)** — Lx-ui's `nodeDisableIsStale` was replaced by
+  upstream's `#6870/#6876` version (separate `nodeUsed`, `nodeUp`/`nodeDown`
+  parameters in `ClientTrafficEnableMergeExpr`). Lx-ui's regression test was
+  adapted to the new signature.
+- **Reset/traffic writer refactors** — upstream's `quotaDisabledEmails(within)`,
+  `handDisabledEmails`, `zeroClientTraffics` and `ResetAllClientTraffics`
+  return values supersede Lx-ui's earlier variants.

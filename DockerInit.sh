@@ -1,29 +1,48 @@
 #!/bin/sh
 set -e
+# $1 is Docker's TARGETARCH and $2 its TARGETVARIANT (v6/v7 on arm). The
+# platform names match the release archives and the mtg-multi packages.
 case $1 in
-    amd64)
-        ARCH="64"
-        FNAME="amd64"
+    amd64 | "")
+        PLATFORM="amd64"
         ;;
-    i386)
-        ARCH="32"
-        FNAME="i386"
+    arm64 | armv8 | aarch64)
+        PLATFORM="arm64"
         ;;
-    armv8 | arm64 | aarch64)
-        ARCH="arm64-v8a"
-        FNAME="arm64"
-        ;;
-    armv7 | arm | arm32)
-        ARCH="arm32-v7a"
-        FNAME="arm32"
+    arm | arm32 | armv7)
+        PLATFORM="armv7"
+        if [ "$2" = "v6" ]; then
+            PLATFORM="armv6"
+        fi
         ;;
     armv6)
-        ARCH="arm32-v6"
-        FNAME="armv6"
+        PLATFORM="armv6"
+        ;;
+    386 | i386)
+        PLATFORM="386"
         ;;
     *)
-        ARCH="64"
-        FNAME="amd64"
+        echo "DockerInit: unsupported architecture '$1'" >&2
+        exit 1
+        ;;
+esac
+case $PLATFORM in
+    amd64) XRAY_ZIP="64" ;;
+    arm64) XRAY_ZIP="arm64-v8a" ;;
+    armv7) XRAY_ZIP="arm32-v7a" ;;
+    armv6) XRAY_ZIP="arm32-v6" ;;
+    386) XRAY_ZIP="32" ;;
+esac
+# The panel looks binaries up by GOARCH; on arm Xray's is "arm32"
+# (internal/xray/process.go) and mtg's plain "arm", as install.sh renames them.
+case $PLATFORM in
+    armv7 | armv6)
+        XRAY_BIN="xray-linux-arm32"
+        MTG_BIN="mtg-linux-arm"
+        ;;
+    *)
+        XRAY_BIN="xray-linux-${PLATFORM}"
+        MTG_BIN="mtg-linux-${PLATFORM}"
         ;;
 esac
 MTG_MULTI_VER=$(curl -sfL "https://api.github.com/repos/mhsanaei/mtg-multi/releases/latest" | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n 1)
@@ -34,30 +53,26 @@ fi
 mkdir -p build/bin
 cd build/bin
 # Bundled Xray: keep in sync with xray.RecommendedXrayVersion (internal/xray/compat.go).
-XRAY_URL="https://github.com/XTLS/Xray-core/releases/download/v26.6.27/Xray-linux-${ARCH}.zip"
-curl -sfLRO "$XRAY_URL"
-curl -sfLRO "${XRAY_URL}.dgst"
-XRAY_SHA256=$(sed -n 's/^SHA2-256= *//p' "Xray-linux-${ARCH}.zip.dgst" | head -n 1)
-if [ -z "$XRAY_SHA256" ] || ! echo "${XRAY_SHA256}  Xray-linux-${ARCH}.zip" | sha256sum -c -; then
+XRAY_URL="https://github.com/XTLS/Xray-core/releases/download/v26.6.27/"
+XRAY_FILE="Xray-linux-${XRAY_ZIP}.zip"
+curl -sfLRO "${XRAY_URL}${XRAY_FILE}"
+curl -sfLRO "${XRAY_URL}${XRAY_FILE}.dgst"
+XRAY_SHA256=$(sed -n 's/^SHA2-256= *//p' "${XRAY_FILE}.dgst" | head -n 1)
+if [ -z "$XRAY_SHA256" ] || ! echo "${XRAY_SHA256}  ${XRAY_FILE}" | sha256sum -c -; then
     echo "DockerInit: Xray archive checksum verification failed" >&2
     exit 1
 fi
-unzip "Xray-linux-${ARCH}.zip"
-rm -f "Xray-linux-${ARCH}.zip" "Xray-linux-${ARCH}.zip.dgst" geoip.dat geosite.dat
-mv xray "xray-linux-${FNAME}"
+unzip "${XRAY_FILE}"
+rm -f "${XRAY_FILE}" "${XRAY_FILE}.dgst" geoip.dat geosite.dat
+mv xray "${XRAY_BIN}"
 # mtg-multi (MTProto sidecar) ships prebuilt release binaries for every target
 # we package, so download and unpack the matching one instead of compiling.
-case $FNAME in
-    i386) MTGARCH="386" ;;
-    arm32) MTGARCH="armv7" ;;
-    *) MTGARCH="$FNAME" ;;
-esac
-MTG_PKG="mtg-multi-${MTG_MULTI_VER#v}-linux-${MTGARCH}"
+MTG_PKG="mtg-multi-${MTG_MULTI_VER#v}-linux-${PLATFORM}"
 curl -sfLRO "https://github.com/mhsanaei/mtg-multi/releases/download/${MTG_MULTI_VER}/${MTG_PKG}.tar.gz"
 tar -xzf "${MTG_PKG}.tar.gz"
-mv "${MTG_PKG}/mtg-multi" "mtg-linux-${FNAME}"
+mv "${MTG_PKG}/mtg-multi" "${MTG_BIN}"
 rm -rf "${MTG_PKG}" "${MTG_PKG}.tar.gz"
-chmod +x "mtg-linux-${FNAME}"
+chmod +x "${MTG_BIN}"
 curl -sfLRO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
 curl -sfLRO https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
 curl -sfLRo geoip_IR.dat https://github.com/chocolate4u/Iran-v2ray-rules/releases/latest/download/geoip.dat

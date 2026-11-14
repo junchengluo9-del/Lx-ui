@@ -15,20 +15,20 @@ import (
 
 	"github.com/mhsanaei/3x-ui/v3/internal/amneziawg"
 	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/tuic"
 	wgutil "github.com/mhsanaei/3x-ui/v3/internal/util/wireguard"
 )
 
 type SubClashService struct {
-	enableRouting bool
-	clashRules    string
-	SubService    *SubService
+	enableRouting  bool
+	clashRules     string
+	clashRemoteDNS bool
+	SubService     *SubService
 }
 
 var errNoLegacyClashProxies = errors.New("no Clash for Windows-compatible proxies found; use the Mihomo subscription for modern proxy types")
 
-func NewSubClashService(enableRouting bool, clashRules string, subService *SubService) *SubClashService {
-	return &SubClashService{enableRouting: enableRouting, clashRules: clashRules, SubService: subService}
+func NewSubClashService(enableRouting bool, clashRules string, clashRemoteDNS bool, subService *SubService) *SubClashService {
+	return &SubClashService{enableRouting: enableRouting, clashRules: clashRules, clashRemoteDNS: clashRemoteDNS, SubService: subService}
 }
 
 func (s *SubClashService) GetClash(subId string, host string) (string, string, error) {
@@ -55,7 +55,9 @@ func (s *SubClashService) getClash(subId string, host string, legacy bool) (stri
 	}
 
 	var proxies []map[string]any
+	var ordered []orderedSubEntry[func() []map[string]any]
 	var hasInactiveExternal bool
+	var hasBoundClosed bool
 	var hasEnabledClient bool
 
 	seenEmails := make(map[string]struct{})
@@ -71,15 +73,46 @@ func (s *SubClashService) getClash(subId string, host string, legacy bool) (stri
 			continue
 		}
 		subReq.projectThroughFallbackMaster(inbound)
-		if hostEps := subReq.hostEndpoints(inbound, "clash"); len(hostEps) > 0 {
-			injectExternalProxy(inbound, hostEps)
+		var baseEps []map[string]any
+		baseStream := inbound.StreamSettings
+		if !subReq.hostsFirst {
+			if baseEps = subReq.hostEndpoints(inbound, "clash"); len(baseEps) > 0 {
+				injectExternalProxy(inbound, baseEps)
+			}
 		}
 		for _, client := range clients {
 			if client.Enable {
 				hasEnabledClient = true
 			}
 			seenEmails[client.Email] = struct{}{}
-			proxies = append(proxies, s.getProxies(subReq, inbound, client, host)...)
+			if subReq.hostsFirst {
+				variants, closed := subReq.clientHostVariants(inbound, client, "clash")
+				hasBoundClosed = hasBoundClosed || closed
+				for _, variant := range variants {
+					render := func() []map[string]any {
+						return s.budgetedProxies(subReq, variant.inbound(subReq, inbound), client, host)
+					}
+					ordered = append(ordered, orderedSubEntry[func() []map[string]any]{variant.order, render})
+				}
+				continue
+			}
+			effective := inbound
+			if effectiveEps, bound := subReq.clientHostEndpoints(inbound, client, "clash", baseEps); bound {
+				if len(effectiveEps) == 0 {
+					hasBoundClosed = true
+					continue
+				}
+				clone := *inbound
+				clone.StreamSettings = baseStream
+				injectExternalProxy(&clone, effectiveEps)
+				effective = &clone
+			}
+			proxies = append(proxies, s.budgetedProxies(subReq, effective, client, host)...)
+		}
+	}
+	if subReq.hostsFirst {
+		for _, render := range orderedSubValues(ordered) {
+			proxies = append(proxies, render()...)
 		}
 	}
 	for _, ext := range externalLinks {
@@ -104,7 +137,7 @@ func (s *SubClashService) getClash(subId string, host string, legacy bool) (stri
 		}
 	}
 
-	if len(proxies) == 0 && !hasInactiveExternal {
+	if len(proxies) == 0 && !hasInactiveExternal && !hasBoundClosed {
 		return "", "", nil
 	}
 	if legacy {
@@ -170,7 +203,7 @@ func (s *SubClashService) getClash(subId string, host string, legacy bool) (stri
 		resolved, remoteDocument, remote, resolveErr := resolveClashRoutingSource(s.clashRules)
 		if resolveErr == nil && strings.TrimSpace(resolved) != "" {
 			if remote {
-				if err := mergeRemoteClashRules(config, remoteDocument); err != nil {
+				if err := mergeRemoteClashRules(config, remoteDocument, s.clashRemoteDNS); err != nil {
 					return "", "", err
 				}
 			} else if err := mergeClashRulesYAML(config, resolved); err != nil {
@@ -400,6 +433,13 @@ func (s *SubClashService) getProxies(subReq *SubService, inbound *model.Inbound,
 			if v, _ := extPrxy["mihomoIpVersion"].(string); v != "" {
 				proxy["ip-version"] = v
 			}
+			// A pre-26.9.8 core accepts a plain X25519 hello, which some DPI lets
+			// through where it drops the two-segment ML-KEM one.
+			if hostX25519Only(extPrxy) {
+				if opts, ok := proxy["reality-opts"].(map[string]any); ok {
+					opts["support-x25519mlkem768"] = false
+				}
+			}
 			proxies = append(proxies, proxy)
 		}
 	}
@@ -484,11 +524,8 @@ func (s *SubClashService) buildProxy(subReq *SubService, inbound *model.Inbound,
 	return proxy
 }
 
-// buildHysteriaProxy produces a mihomo-compatible Clash entry for a
-// Hysteria (v1) or Hysteria2 inbound. It reads `inbound.StreamSettings`
-// directly instead of going through streamData/tlsData, because those
-// helpers prune fields (like `allowInsecure` / the salamander obfs
-// block) that the hysteria proxy wants preserved.
+// buildHysteriaProxy reads the raw stream because streamData prunes
+// TLS pins and finalmask settings needed by Hysteria clients.
 func (s *SubClashService) buildHysteriaProxy(subReq *SubService, inbound *model.Inbound, client model.Client, ep map[string]any) map[string]any {
 	inboundSettings := subReq.linkSettings(inbound)
 
@@ -511,34 +548,9 @@ func (s *SubClashService) buildHysteriaProxy(subReq *SubService, inbound *model.
 	var rawStream map[string]any
 	_ = json.Unmarshal([]byte(inbound.StreamSettings), &rawStream)
 
-	// TLS details — hysteria always uses TLS.
-	if tlsSettings, ok := rawStream["tlsSettings"].(map[string]any); ok {
-		if serverName, ok := tlsSettings["serverName"].(string); ok && serverName != "" {
-			proxy["sni"] = serverName
-		}
-		if alpnList, ok := tlsSettings["alpn"].([]any); ok && len(alpnList) > 0 {
-			out := make([]string, 0, len(alpnList))
-			for _, a := range alpnList {
-				if s, ok := a.(string); ok && s != "" {
-					out = append(out, s)
-				}
-			}
-			if len(out) > 0 {
-				proxy["alpn"] = out
-			}
-		}
-		if inner, ok := tlsSettings["settings"].(map[string]any); ok {
-			if insecure, ok := inner["allowInsecure"].(bool); ok && insecure {
-				proxy["skip-cert-verify"] = true
-			}
-			if fp, ok := inner["fingerprint"].(string); ok && fp != "" {
-				proxy["client-fingerprint"] = fp
-			}
-			if certFingerprint := mihomoCertFingerprint(inner["pinnedPeerCertSha256"]); certFingerprint != "" {
-				proxy["fingerprint"] = certFingerprint
-			}
-		}
-	}
+	tlsSettings, _ := rawStream["tlsSettings"].(map[string]any)
+	clientTLS, _ := tlsSettings["settings"].(map[string]any)
+	applyHysteriaTLS(proxy, tlsSettings, clientTLS)
 	if insecure, ok := ep["allowInsecure"].(bool); ok && insecure {
 		proxy["skip-cert-verify"] = true
 	}
@@ -546,39 +558,54 @@ func (s *SubClashService) buildHysteriaProxy(subReq *SubService, inbound *model.
 		proxy["fingerprint"] = certFingerprint
 	}
 
-	// Salamander obfs (Hysteria2), read from the same finalmask.udp[salamander]
-	// block as the link generator; a packetSize range is mihomo's gecko obfs.
-	if finalmask, ok := rawStream["finalmask"].(map[string]any); ok {
-		if udpMasks, ok := finalmask["udp"].([]any); ok {
-			for _, m := range udpMasks {
-				mask, _ := m.(map[string]any)
-				if mask == nil || mask["type"] != "salamander" {
-					continue
-				}
-				settings, _ := mask["settings"].(map[string]any)
-				if pw, ok := settings["password"].(string); ok && pw != "" {
-					proxy["obfs"] = "salamander"
-					proxy["obfs-password"] = pw
-					packetSize, _ := settings["packetSize"].(string)
-					if gecko := parseHysteriaPacketSize(packetSize); gecko != "" {
-						minStr, maxStr := splitHysteriaPacketSize(gecko)
-						proxy["obfs"] = "gecko"
-						proxy["obfs-min-packet-size"], _ = strconv.Atoi(minStr)
-						proxy["obfs-max-packet-size"], _ = strconv.Atoi(maxStr)
-					}
-					break
-				}
-			}
-		}
-	}
-
-	// UDP port hopping. mihomo reads the range from a dedicated `ports`
-	// field (the base `port` stays as the redirect target).
-	if hopPorts := hysteriaHopPorts(rawStream); hopPorts != "" {
-		proxy["ports"] = hopPorts
-	}
+	applyHysteriaFinalMask(proxy, rawStream)
 
 	return proxy
+}
+
+func applyHysteriaTLS(proxy, tlsSettings, clientTLS map[string]any) {
+	if sni, _ := tlsSettings["serverName"].(string); sni != "" {
+		proxy["sni"] = sni
+	}
+	if alpn := clashStringList(tlsSettings["alpn"]); len(alpn) > 0 {
+		proxy["alpn"] = alpn
+	}
+	if insecure, _ := clientTLS["allowInsecure"].(bool); insecure {
+		proxy["skip-cert-verify"] = true
+	}
+	if fp, _ := clientTLS["fingerprint"].(string); fp != "" {
+		proxy["client-fingerprint"] = fp
+	}
+	if certFingerprint := mihomoCertFingerprint(clientTLS["pinnedPeerCertSha256"]); certFingerprint != "" {
+		proxy["fingerprint"] = certFingerprint
+	}
+}
+
+func applyHysteriaFinalMask(proxy, stream map[string]any) {
+	finalmask, _ := stream["finalmask"].(map[string]any)
+	udpMasks, _ := finalmask["udp"].([]any)
+	for _, m := range udpMasks {
+		mask, _ := m.(map[string]any)
+		if mask == nil || mask["type"] != "salamander" {
+			continue
+		}
+		settings, _ := mask["settings"].(map[string]any)
+		if pw, ok := settings["password"].(string); ok && pw != "" {
+			proxy["obfs"] = "salamander"
+			proxy["obfs-password"] = pw
+			packetSize, _ := settings["packetSize"].(string)
+			if gecko := parseHysteriaPacketSize(packetSize); gecko != "" {
+				minStr, maxStr := splitHysteriaPacketSize(gecko)
+				proxy["obfs"] = "gecko"
+				proxy["obfs-min-packet-size"], _ = strconv.Atoi(minStr)
+				proxy["obfs-max-packet-size"], _ = strconv.Atoi(maxStr)
+			}
+			break
+		}
+	}
+	if hopPorts := hysteriaHopPorts(stream); hopPorts != "" {
+		proxy["ports"] = hopPorts
+	}
 }
 
 // Mihomo supports only one certificate fingerprint, so mihomoCertFingerprint
@@ -629,8 +656,7 @@ func (s *SubClashService) buildWireguardProxy(subReq *SubService, inbound *model
 		return nil
 	}
 
-	var inboundSettings map[string]any
-	_ = json.Unmarshal([]byte(inbound.Settings), &inboundSettings)
+	inboundSettings := subReq.linkSettings(inbound)
 	secretKey, _ := inboundSettings["secretKey"].(string)
 
 	proxy := map[string]any{
@@ -649,7 +675,7 @@ func (s *SubClashService) buildWireguardProxy(subReq *SubService, inbound *model
 	if client.PreSharedKey != "" {
 		proxy["pre-shared-key"] = client.PreSharedKey
 	}
-	if ka := client.KeepAliveSeconds(); ka > 0 {
+	if ka, ok := keepAliveForScalarExport(client); ok {
 		proxy["persistent-keepalive"] = ka
 	}
 	for _, addr := range client.AllowedIPs {
@@ -682,21 +708,18 @@ func (s *SubClashService) buildWireguardProxy(subReq *SubService, inbound *model
 }
 
 func (s *SubClashService) buildTuicProxy(subReq *SubService, inbound *model.Inbound, client model.Client, ep map[string]any) map[string]any {
-	inst, ok := tuic.InstanceFromInbound(inbound)
-	if !ok {
+	inst := subReq.tuicInstanceForLink(inbound)
+	if inst == nil {
 		return nil
 	}
 	uuid := client.ID
 	password := client.Password
-	for _, c := range inst.Clients {
-		if c.Email == client.Email {
-			if uuid == "" {
-				uuid = c.UUID
-			}
-			if password == "" {
-				password = c.Password
-			}
-			break
+	if c := inst.byEmail[client.Email]; c != nil {
+		if uuid == "" {
+			uuid = c.UUID
+		}
+		if password == "" {
+			password = c.Password
 		}
 	}
 	if uuid == "" || password == "" {
@@ -738,15 +761,9 @@ func (s *SubClashService) buildTuicProxy(subReq *SubService, inbound *model.Inbo
 // amneziaWGClientAddresses prefers this inbound's own settings entry over the
 // shared clients.wg_allowed_ips column, which for an identity attached to both
 // a wireguard and an amneziawg inbound holds the other one's address.
-func amneziaWGClientAddresses(settingsClients []model.Client, client model.Client) []string {
-	for i := range settingsClients {
-		if !strings.EqualFold(settingsClients[i].Email, client.Email) {
-			continue
-		}
-		if len(settingsClients[i].AllowedIPs) > 0 {
-			return settingsClients[i].AllowedIPs
-		}
-		break
+func amneziaWGClientAddresses(subReq *SubService, inbound *model.Inbound, client model.Client) []string {
+	if own, ok := subReq.clientForLink(inbound, client.Email); ok && len(own.AllowedIPs) > 0 {
+		return own.AllowedIPs
 	}
 	return client.AllowedIPs
 }
@@ -770,11 +787,10 @@ func (s *SubClashService) buildAmneziaWGProxy(subReq *SubService, inbound *model
 		return nil
 	}
 
-	var parsed amneziawg.InboundSettings
-	if err := json.Unmarshal([]byte(inbound.Settings), &parsed); err != nil || parsed.Server == nil {
+	server := subReq.amneziaWGServerForLink(inbound)
+	if server == nil {
 		return nil
 	}
-	server := parsed.Server
 
 	proxy := map[string]any{
 		"name":        subReq.endpointRemark(inbound, client.Email, ep, ""),
@@ -791,11 +807,11 @@ func (s *SubClashService) buildAmneziaWGProxy(subReq *SubService, inbound *model
 	if client.PreSharedKey != "" {
 		proxy["pre-shared-key"] = client.PreSharedKey
 	}
-	if ka := client.KeepAliveSeconds(); ka > 0 {
+	if ka, ok := keepAliveForScalarExport(client); ok {
 		proxy["persistent-keepalive"] = ka
 	}
 
-	for _, addr := range amneziaWGClientAddresses(parsed.Clients, client) {
+	for _, addr := range amneziaWGClientAddresses(subReq, inbound, client) {
 		ip := stripCIDR(addr)
 		if ip == "" {
 			continue
@@ -1071,8 +1087,9 @@ func (s *SubClashService) applyTransport(proxy map[string]any, network string, s
 			if header != nil {
 				typeStr, _ := header["type"].(string)
 				if typeStr != "" && typeStr != "none" {
-					// Maps TCP HTTP obfuscation headers to Mihomo's native simple-obfs plugin only for the Shadowsocks protocol
-					if proxy["type"] == "ss" && typeStr == "http" {
+					// Mihomo's simple-obfs always sends GET /, and xray-core rejects a request whose
+					// path is not one of the header's paths, so only a "/" header maps to obfs.
+					if proxy["type"] == "ss" && typeStr == "http" && tcpHeaderAcceptsRootPath(header) {
 						proxy["plugin"] = "obfs"
 						opts := map[string]any{
 							"mode": "http",
@@ -1158,30 +1175,26 @@ func (s *SubClashService) applyTransport(proxy map[string]any, network string, s
 	}
 }
 
+// tcpHeaderAcceptsRootPath reports whether the inbound's HTTP header accepts "/"; xray-core
+// defaults an absent request path to "/".
+func tcpHeaderAcceptsRootPath(header map[string]any) bool {
+	request, _ := header["request"].(map[string]any)
+	paths, _ := request["path"].([]any)
+	if len(paths) == 0 {
+		return true
+	}
+	for _, p := range paths {
+		if p == "/" {
+			return true
+		}
+	}
+	return false
+}
+
 func extractTCPHeaderHost(header map[string]any) string {
-	if header == nil {
-		return ""
-	}
-
-	// Prioritize reading request.headers sent by the client
-	if request, ok := header["request"].(map[string]any); ok {
-		if reqHeaders, ok := request["headers"].(map[string]any); ok {
-			if host := findHostInHeaders(reqHeaders); host != "" {
-				return host
-			}
-		}
-	}
-
-	// Fall back to reading response.headers
-	if response, ok := header["response"].(map[string]any); ok {
-		if respHeaders, ok := response["headers"].(map[string]any); ok {
-			if host := findHostInHeaders(respHeaders); host != "" {
-				return host
-			}
-		}
-	}
-
-	return ""
+	request, _ := header["request"].(map[string]any)
+	reqHeaders, _ := request["headers"].(map[string]any)
+	return findHostInHeaders(reqHeaders)
 }
 
 func findHostInHeaders(headers map[string]any) string {
@@ -1368,16 +1381,50 @@ func mergeClashRulesYAML(base map[string]any, raw string) error {
 	return nil
 }
 
-// mergeRemoteClashRules lets remote update only the route graph (see
-// remoteClashAllowedKey) and never mutates remote: cached documents are shared.
-func mergeRemoteClashRules(base map[string]any, remote map[string]any) error {
+type remoteClashKeyClass int
+
+const (
+	remoteClashRouteGraph remoteClashKeyClass = iota + 1
+	remoteClashClientConfig
+)
+
+// Client config keys steer the client's own resolver, so a remote URL may set
+// them only when the admin opts in (subClashRemoteDNS).
+var remoteClashKeyClasses = map[string]remoteClashKeyClass{
+	"proxy-groups":   remoteClashRouteGraph,
+	"rule-providers": remoteClashRouteGraph,
+	"rules":          remoteClashRouteGraph,
+	"dns":            remoteClashClientConfig,
+	"sniffer":        remoteClashClientConfig,
+}
+
+func remoteClashKeyAllowed(key string, allowClientConfig bool) bool {
+	switch remoteClashKeyClasses[key] {
+	case remoteClashRouteGraph:
+		return true
+	case remoteClashClientConfig:
+		return allowClientConfig
+	default:
+		return false
+	}
+}
+
+// mergeRemoteClashRules copies only keys listed in remoteClashKeyClasses and
+// never mutates remote: cached documents are shared.
+func mergeRemoteClashRules(base map[string]any, remote map[string]any, allowClientConfig bool) error {
 	if len(remote) == 0 {
 		return fmt.Errorf("remote Clash routing source must be a YAML map")
 	}
 
 	for key, value := range remote {
-		if !remoteClashAllowedKey(key) {
+		if !remoteClashKeyAllowed(key, allowClientConfig) {
 			continue
+		}
+		if remoteClashKeyClasses[key] == remoteClashClientConfig {
+			// A malformed dns or sniffer must not cost the client its routing.
+			if _, ok := value.(map[string]any); !ok {
+				continue
+			}
 		}
 		if err := validateRemoteClashValue(key, value); err != nil {
 			return err
@@ -1452,15 +1499,6 @@ func validateRemoteClashValue(key string, value any) error {
 		}
 	}
 	return nil
-}
-
-func remoteClashAllowedKey(key string) bool {
-	switch key {
-	case "proxy-groups", "rule-providers", "rules":
-		return true
-	default:
-		return false
-	}
 }
 
 func validateClashRouteGraph(config map[string]any) error {

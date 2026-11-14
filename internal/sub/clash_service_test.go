@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/mhsanaei/3x-ui/v3/internal/amneziawg"
@@ -168,7 +169,7 @@ func TestBuildProxy_VLESSRealityFieldsForClash(t *testing.T) {
 }
 
 func TestClashRealityMLKEMAcrossSources(t *testing.T) {
-	svc := NewSubClashService(false, "", &SubService{})
+	svc := NewSubClashService(false, "", false, &SubService{})
 	for _, security := range []string{"reality", "tls", "none"} {
 		for _, fingerprint := range []string{"", "chrome", "firefox"} {
 			t.Run(security+"/"+fingerprint, func(t *testing.T) {
@@ -298,6 +299,36 @@ func TestApplyTransport_TCPHeader(t *testing.T) {
 			},
 			wantAccepted: false,
 		},
+		{
+			name:      "A header path other than / is dropped: obfs always requests /",
+			proxyType: "ss",
+			stream: map[string]any{
+				"tcpSettings": map[string]any{
+					"header": map[string]any{
+						"type": "http",
+						"request": map[string]any{
+							"path":    []any{"/download"},
+							"headers": map[string]any{"Host": []any{"cdn.example.com"}},
+						},
+					},
+				},
+			},
+			wantAccepted: false,
+		},
+		{
+			name:      "Host comes from the request headers only",
+			proxyType: "ss",
+			stream: map[string]any{
+				"tcpSettings": map[string]any{
+					"header": map[string]any{
+						"type":     "http",
+						"response": map[string]any{"headers": map[string]any{"Host": []any{"response.example.com"}}},
+					},
+				},
+			},
+			wantAccepted: true,
+			wantPlugin:   "obfs",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -315,7 +346,7 @@ func TestApplyTransport_TCPHeader(t *testing.T) {
 				if opts["mode"] != "http" {
 					t.Fatalf("expected mode=http, got=%v", opts["mode"])
 				}
-				if opts["host"] != tc.wantHost {
+				if host, _ := opts["host"].(string); host != tc.wantHost {
 					t.Fatalf("expected host=%q, got=%v", tc.wantHost, opts["host"])
 				}
 			}
@@ -1631,5 +1662,29 @@ func TestMihomoCertFingerprintUsesFirstValidPin(t *testing.T) {
 				t.Fatalf("mihomoCertFingerprint() = %q, want %q", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestBuildAmneziaWGProxyForClashProjectsKeepAliveRangeToLowerBound(t *testing.T) {
+	keepAlive := model.KeepAliveValue("15-25")
+	client := model.Client{Email: "range@awg", PrivateKey: "client-key", KeepAlive: &keepAlive}
+	inbound := &model.Inbound{Protocol: model.AmneziaWG, Listen: "198.51.100.1", Port: 443, Settings: `{"server":{"privateKey":"server","publicKey":"server-pub","subnetIp":"10.8.1.0","subnetCidr":24},"clients":[]}`}
+	svc := NewSubClashService(false, "", false, &SubService{})
+	proxy := svc.buildProxy(svc.SubService, inbound, client, nil, nil)
+	if proxy == nil || proxy["persistent-keepalive"] != 15 {
+		t.Fatalf("Clash persistent-keepalive = %v, want range lower bound 15", proxy["persistent-keepalive"])
+	}
+	blob, err := marshalClashYAML(proxy)
+	if err != nil {
+		t.Fatalf("marshal Clash proxy: %v", err)
+	}
+	if !strings.Contains(string(blob), "persistent-keepalive: 15") {
+		t.Fatalf("Clash YAML did not preserve lower-bound projection:\n%s", blob)
+	}
+	legacyNegative := model.KeepAliveValue("-1")
+	client.KeepAlive = &legacyNegative
+	proxy = svc.buildProxy(svc.SubService, inbound, client, nil, nil)
+	if _, ok := proxy["persistent-keepalive"]; ok {
+		t.Fatalf("Clash export emitted invalid legacy keepalive: %v", proxy["persistent-keepalive"])
 	}
 }

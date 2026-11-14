@@ -43,6 +43,7 @@ type PanelUpdateInfo struct {
 
 const (
 	maxPanelUpdaterBytes = 2 << 20
+	maxPanelReleaseBytes = 2 << 20
 	// devReleaseTag is the fixed-tag rolling pre-release the CI force-moves to the
 	// newest main commit; the dev update channel installs from it.
 	devReleaseTag = "dev-latest"
@@ -251,6 +252,9 @@ func (s *PanelService) startUpdate(useDev bool) (int64, error) {
 	statusFileEnv := "XUI_UPDATE_STATUS_FILE=" + statusFile
 	// update.sh downloads from LXUI_REPO; pin it to the repo this binary uses.
 	repoEnv := "LXUI_REPO=" + config.GetReleaseRepo()
+	// update.sh sends its curl downloads through the panel egress bridge. With socks5h the
+	// proxy resolves GitHub's hostnames, since this server's own DNS may be filtered.
+	egressEnv := "XUI_UPDATE_PROXY=" + strings.Replace((&service.SettingService{}).PanelEgressProxyURL(), "socks5://", "socks5h://", 1)
 	proxyEnv := updateProxyEnvVars()
 
 	if systemdRun, err := exec.LookPath("systemd-run"); err == nil {
@@ -263,6 +267,7 @@ func (s *PanelService) startUpdate(useDev bool) (int64, error) {
 			"--setenv", runIDEnv,
 			"--setenv", statusFileEnv,
 			"--setenv", repoEnv,
+			"--setenv", egressEnv,
 		}
 		for _, kv := range proxyEnv {
 			args = append(args, "--setenv", kv)
@@ -293,6 +298,7 @@ func (s *PanelService) startUpdate(useDev bool) (int64, error) {
 		runIDEnv,
 		statusFileEnv,
 		repoEnv,
+		egressEnv,
 	)
 	setDetachedProcess(cmd)
 	if err := cmd.Start(); err != nil {
@@ -470,7 +476,7 @@ func fetchPanelRelease(tag string) (*service.Release, error) {
 	}
 
 	var release service.Release
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+	if err := json.NewDecoder(io.LimitReader(resp.Body, maxPanelReleaseBytes)).Decode(&release); err != nil {
 		return nil, err
 	}
 	return &release, nil

@@ -1,4 +1,5 @@
 import { XHttpXmuxSchema } from '@/schemas/protocols/stream/xhttp';
+import { liftLegacyXDriveService } from '@/schemas/protocols/stream/xdrive';
 import { OutboundDomainStrategySchema } from '@/schemas/protocols/outbound';
 import { AmneziaWGOutboundSettingsSchema } from '@/schemas/protocols/outbound';
 import { canEnableTlsFlow } from '@/lib/xray/protocol-capabilities';
@@ -353,14 +354,23 @@ function freedomFromWire(
       network,
       port: asString(rr.port),
       ip: asArray(rr.ip).map((x) => asString(x)),
-      blockDelay: asString(rr.blockDelay),
+      // The deprecated blockDelay wins over delay, as it does in xray-core 26.11.9.
+      delay: asString(rr.blockDelay) || asString(rr.delay),
+      logLevel: asString(rr.logLevel),
     };
   });
   // Legacy ipsBlocked → finalRule(block) backfill
   if (finalRules.length === 0) {
     const ipsBlocked = asArray(raw.ipsBlocked).map((x) => asString(x));
     if (ipsBlocked.length > 0) {
-      finalRules.push({ action: 'block', network: '', port: '', ip: ipsBlocked, blockDelay: '' });
+      finalRules.push({
+        action: 'block',
+        network: '',
+        port: '',
+        ip: ipsBlocked,
+        delay: '',
+        logLevel: '',
+      });
     }
   }
   // Wire fragment is either missing or a populated object. Mirror the
@@ -570,6 +580,7 @@ function hydrateStreamForm(stream: Raw): OutboundStreamFormValues {
     next.network = next.method;
   }
   delete next.method;
+  liftLegacyXDriveService(next);
   const xh = next.xhttpSettings;
   if (xh && typeof xh === 'object' && !Array.isArray(xh)) {
     const xhttp = { ...(xh as Raw) };
@@ -826,7 +837,8 @@ function freedomToWire(s: FreedomOutboundFormSettings) {
             network: r.network || undefined,
             port: r.port || undefined,
             ip: r.ip.length > 0 ? r.ip : undefined,
-            blockDelay: r.action === 'block' && r.blockDelay ? r.blockDelay : undefined,
+            delay: r.action === 'block' && r.delay ? r.delay : undefined,
+            logLevel: r.action === 'block' && r.logLevel ? r.logLevel : undefined,
           }))
         : undefined,
   };

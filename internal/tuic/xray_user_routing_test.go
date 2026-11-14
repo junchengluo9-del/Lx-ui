@@ -111,7 +111,7 @@ func TestTuicRelayUserRoutingWithPerEmailAccounts(t *testing.T) {
 	echo := startEcho(t)
 	port := freePort(t)
 	password := tuic.SocksPassword()
-	settings, err := tuic.SocksInboundSettings([]string{"allowed@example.test", "blocked@example.test"}, password)
+	settings, err := tuic.SocksInboundSettings([]string{"allowed@example.test", "blocked@example.test"}, password, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
