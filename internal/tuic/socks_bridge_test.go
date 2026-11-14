@@ -441,4 +441,3 @@ func TestSOCKSPortForInboundKeepsEverySlotInsideTheWindow(t *testing.T) {
 		t.Fatalf("expected 64001 for id 0, got %d", got)
 	}
 }
-

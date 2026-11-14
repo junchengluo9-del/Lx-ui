@@ -34,10 +34,10 @@ a Lx-ui change, and leaves nothing for `tools/rebrand.sh` to guess at.
 
 ## Sync points
 
-| Date (UTC+8) | Upstream commit                         | Notes                                                                                        |
-| ------------ | --------------------------------------- | -------------------------------------------------------------------------------------------- |
-| 2026-10-19   | `a8d0700b`                              | Fork point (v3.10.2 + #6859, #6666).                                                          |
-| 2026-11-14   | `5297fd3c`                              | v3.11.0 + 244 commits (245 total, 892 files). Sponsor/donate/branding excluded; see below.     |
+| Date (UTC+8) | Upstream commit | Notes                                                                                      |
+| ------------ | --------------- | ------------------------------------------------------------------------------------------ |
+| 2026-10-19   | `a8d0700b`      | Fork point (v3.10.2 + #6859, #6666).                                                       |
+| 2026-11-14   | `5297fd3c`      | v3.11.0 + 244 commits (245 total, 892 files). Sponsor/donate/branding excluded; see below. |
 
 ## Upstream pull requests merged into lx-base
 
